@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        body { background-color: #000; color: #fff; font-family: sans-serif; margin: 0; padding: 20px; }
+        .header { text-align: center; font-size: 24px; letter-spacing: 5px; margin-bottom: 30px; }
+        .card { background: #111; border: 1px solid #222; border-radius: 15px; padding: 15px; margin-bottom: 20px; }
+        .price { font-weight: bold; font-size: 18px; margin: 10px 0; }
+        .btn { background: #fff; color: #000; text-align: center; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <div class="header">Lantsyuh</div>
+    <div class="card">
+        <div style="width: 100%; height: 200px; background: #222; border-radius: 10px; display: flex; align-items: center; justify-content: center;">Фото товара</div>
+        <div class="price">16 900 ₽</div>
+        <div class="btn" onclick="sendOrder('Товар 18')">В корзину</div>
+    </div>
+    <script>
+        let tg = window.Telegram.WebApp;
+        tg.expand();
+        function sendOrder(item) {
+            tg.sendData(item); // Отправляет название товара боту
+        }
+    </script>
+</body>
+</html>
