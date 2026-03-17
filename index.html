@@ -1,33 +1,145 @@
 <!DOCTYPE html>
-<html>
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        body { background-color: #000; color: #fff; font-family: sans-serif; margin: 0; padding: 20px; }
-        .header { text-align: center; font-size: 24px; letter-spacing: 5px; margin-bottom: 30px; }
-        .card { background: #111; border: 1px solid #222; border-radius: 15px; padding: 15px; margin-bottom: 20px; }
-        .price { font-weight: bold; font-size: 18px; margin: 10px 0; }
-        .btn { background: #fff; color: #000; text-align: center; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer; }
+        /* Общие настройки стиля */
+        body { 
+            background-color: #000; 
+            color: #fff; 
+            font-family: -apple-system, sans-serif; 
+            margin: 0; 
+            padding: 10px; 
+            padding-bottom: 80px; /* Место для кнопки внизу */
+        }
+        .header { 
+            text-align: center; 
+            font-size: 22px; 
+            letter-spacing: 4px; 
+            margin: 20px 0; 
+            font-weight: bold; 
+            text-transform: uppercase;
+        }
+        
+        /* Сетка: 2 колонки */
+        .container { 
+            display: grid; 
+            grid-template-columns: 1fr 1fr; 
+            gap: 12px; 
+        }
+        
+        /* Стиль карточки */
+        .card { 
+            background: #111; 
+            border-radius: 12px; 
+            overflow: hidden; 
+            border: 1px solid #222; 
+            display: flex; 
+            flex-direction: column;
+        }
+        
+        /* Настройка фото, чтобы были одинаковыми */
+        .card img { 
+            width: 100%; 
+            aspect-ratio: 1 / 1; /* Делает фото квадратным */
+            object-fit: cover;   /* Обрезает края, если фото не квадратное */
+            display: block;
+        }
+        
+        .card-content { 
+            padding: 12px; 
+        }
+        
+        .title { 
+            font-size: 13px; 
+            color: #888; 
+            margin-bottom: 5px; 
+            height: 32px; /* Фиксирует высоту названия */
+            overflow: hidden;
+        }
+        
+        .price { 
+            font-weight: bold; 
+            font-size: 16px; 
+            margin-bottom: 10px;
+        }
+        
+        /* Кнопка "В корзину" */
+        .btn { 
+            background: #fff; 
+            color: #000; 
+            text-align: center; 
+            padding: 10px; 
+            border-radius: 8px; 
+            font-weight: bold; 
+            font-size: 14px; 
+            cursor: pointer;
+        }
+        .btn:active { transform: scale(0.95); }
+
+        /* Кнопка "Написать менеджеру" внизу */
+        .contact-footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0,0,0,0.8);
+            padding: 15px;
+            text-align: center;
+            border-top: 1px solid #222;
+        }
+        .contact-btn {
+            color: #fff;
+            text-decoration: none;
+            font-size: 14px;
+            opacity: 0.8;
+            border-bottom: 1px solid #555;
+            padding-bottom: 2px;
+        }
     </style>
 </head>
 <body>
+
     <div class="header">Lantsyuh</div>
-    <div class="card">
-        <img src="https://github.com/xstes/Lantsyuh/blob/main/action_292165.jpg?raw=true style="width: 100%; height: 200px; background: #222; border-radius: 10px; display: flex; align-items: center; justify-content: center;">
-        <div class="price">10 000 ₽</div>
-        <div class="btn" onclick="sendOrder('Розовые бусики')">В корзину</div>
-          <div class="card">
-        <img src="https://github.com/xstes/Lantsyuh/blob/main/action_292381.jpg?raw=true" alt="Коричневые бусы" style="width: 100%; height: 200px; background: #222; border-radius: 10px; display: flex; align-items: center; justify-content: center;">
-        <div class="price">10 000 ₽</div>
-        <div class="btn" onclick="sendOrder('Коричневые бусики')">В корзину</div>
+    
+    <div class="container">
+        <div class="card">
+            <img src="https://github.com/xstes/Lantsyuh/blob/main/action_292165.jpg?raw=true">
+            <div class="card-content">
+                <div class="title">Розовые бусики</div>
+                <div class="price">10 000 ₽</div>
+                <div class="btn" onclick="sendOrder('Розовые бусики')">В корзину</div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <img src="https://github.com/xstes/Lantsyuh/blob/main/action_292381.jpg?raw=true">
+            <div class="card-content">
+                <div class="title">Коричневые бусы</div>
+                <div class="price">16 900 ₽</div>
+                <div class="btn" onclick="sendOrder('Коричневые бусы')">В корзину</div>
+            </div>
+        </div>
     </div>
+
+    <div class="contact-footer">
+        <a href="#" class="contact-btn" onclick="sendMessage()">СВЯЗАТЬСЯ С МЕНЕДЖЕРОМ</a>
+    </div>
+
     <script>
         let tg = window.Telegram.WebApp;
         tg.expand();
+
+        // Функция заказа
         function sendOrder(item) {
-            tg.sendData(item); // Отправляет название товара боту
+            tg.sendData("Заказ: " + item);
+        }
+
+        // Функция связи
+        function sendMessage() {
+            tg.sendData("Запрос связи с менеджером");
         }
     </script>
 </body>
