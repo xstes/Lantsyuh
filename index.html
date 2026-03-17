@@ -5,141 +5,149 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        /* Общие настройки стиля */
-        body { 
-            background-color: #000; 
-            color: #fff; 
-            font-family: -apple-system, sans-serif; 
-            margin: 0; 
-            padding: 10px; 
-            padding-bottom: 80px; /* Место для кнопки внизу */
-        }
-        .header { 
-            text-align: center; 
-            font-size: 22px; 
-            letter-spacing: 4px; 
-            margin: 20px 0; 
-            font-weight: bold; 
-            text-transform: uppercase;
-        }
-        
-        /* Сетка: 2 колонки */
-        .container { 
-            display: grid; 
-            grid-template-columns: 1fr 1fr; 
-            gap: 12px; 
-        }
-        
-        /* Стиль карточки */
-        .card { 
-            background: #111; 
-            border-radius: 12px; 
-            overflow: hidden; 
-            border: 1px solid #222; 
-            display: flex; 
-            flex-direction: column;
-        }
-        
-        /* Настройка фото, чтобы были одинаковыми */
-        .card img { 
-            width: 100%; 
-            aspect-ratio: 1 / 1; /* Делает фото квадратным */
-            object-fit: cover;   /* Обрезает края, если фото не квадратное */
-            display: block;
-        }
-        
-        .card-content { 
-            padding: 12px; 
-        }
-        
-        .title { 
-            font-size: 13px; 
-            color: #888; 
-            margin-bottom: 5px; 
-            height: 32px; /* Фиксирует высоту названия */
-            overflow: hidden;
-        }
-        
-        .price { 
-            font-weight: bold; 
-            font-size: 16px; 
-            margin-bottom: 10px;
-        }
-        
-        /* Кнопка "В корзину" */
-        .btn { 
-            background: #fff; 
-            color: #000; 
-            text-align: center; 
-            padding: 10px; 
-            border-radius: 8px; 
-            font-weight: bold; 
-            font-size: 14px; 
-            cursor: pointer;
-        }
-        .btn:active { transform: scale(0.95); }
-
-        /* Кнопка "Написать менеджеру" внизу */
-        .contact-footer {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: rgba(0,0,0,0.8);
-            padding: 15px;
-            text-align: center;
-            border-top: 1px solid #222;
-        }
-        .contact-btn {
-            color: #fff;
-            text-decoration: none;
-            font-size: 14px;
-            opacity: 0.8;
-            border-bottom: 1px solid #555;
-            padding-bottom: 2px;
-        }
+        :root { --bg: #000; --card-bg: #111; --text: #fff; --gray: #888; --accent: #fff; }
+        body { background: var(--bg); color: var(--text); font-family: -apple-system, sans-serif; margin: 0; padding: 10px; padding-bottom: 80px; }
+        .header { text-align: center; font-size: 22px; letter-spacing: 5px; margin: 20px 0 10px; font-weight: bold; }
+        .main-desc { text-align: center; font-size: 13px; color: var(--gray); margin-bottom: 25px; padding: 0 10px; line-height: 1.4; }
+        .container { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .card { background: var(--card-bg); border-radius: 12px; overflow: hidden; border: 1px solid #222; position: relative; }
+        .card img { width: 100%; aspect-ratio: 1/1; object-fit: cover; display: block; }
+        .status-badge { position: absolute; top: 8px; left: 8px; font-size: 9px; padding: 3px 6px; border-radius: 4px; text-transform: uppercase; font-weight: bold; background: rgba(0,0,0,0.6); }
+        .status-available { color: #4caf50; }
+        .status-order { color: #ff9800; }
+        .card-content { padding: 10px; }
+        .title { font-size: 13px; color: var(--gray); margin-bottom: 4px; height: 32px; overflow: hidden; }
+        .price { font-weight: bold; font-size: 15px; }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 1000; overflow-y: auto; }
+        .close-modal { position: fixed; top: 20px; right: 20px; z-index: 1001; background: rgba(255,255,255,0.1); width: 35px; height: 35px; border-radius: 50%; text-align: center; line-height: 35px; font-size: 24px; }
+        .carousel { position: relative; width: 100%; aspect-ratio: 1/1; overflow: hidden; }
+        .carousel-track { display: flex; transition: transform 0.3s ease; height: 100%; }
+        .carousel-track img { width: 100%; flex-shrink: 0; object-fit: cover; }
+        .carousel-dots { position: absolute; bottom: 15px; width: 100%; display: flex; justify-content: center; gap: 5px; }
+        .dot { width: 6px; height: 6px; background: rgba(255,255,255,0.3); border-radius: 50%; }
+        .dot.active { background: #fff; }
+        .modal-info { padding: 20px; }
+        .m-status { font-size: 12px; margin-bottom: 10px; font-weight: bold; }
+        .m-title { font-size: 24px; font-weight: bold; margin-bottom: 10px; }
+        .m-price { font-size: 20px; font-weight: bold; margin-bottom: 20px; }
+        .m-desc { color: var(--gray); line-height: 1.6; font-size: 14px; margin-bottom: 30px; }
+        .btn-group { display: flex; flex-direction: column; gap: 10px; }
+        .btn-main { background: #fff; color: #000; text-align: center; padding: 15px; border-radius: 10px; font-weight: bold; cursor: pointer; }
+        .btn-sec { background: transparent; color: #fff; border: 1px solid #333; text-align: center; padding: 15px; border-radius: 10px; font-weight: bold; cursor: pointer; }
+        #questionForm { display: none; margin-top: 20px; flex-direction: column; gap: 10px; }
+        textarea { background: #111; border: 1px solid #333; color: #fff; padding: 10px; border-radius: 8px; font-family: inherit; resize: none; }
+        .contact-footer { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,0.8); padding: 15px; text-align: center; border-top: 1px solid #222; z-index: 50; }
+        .contact-btn { color: var(--gray); font-size: 12px; text-decoration: none; border-bottom: 1px solid #444; }
     </style>
 </head>
 <body>
 
-    <div class="header">Lantsyuh</div>
+    <div class="header">LANTSYUH</div>
+    
+    <div class="main-desc">Лимитированные аксессуары ручной работы. <br> Твой стиль — твоя броня.</div>
     
     <div class="container">
-        <div class="card">
+
+        <div class="card" onclick="openProduct(
+            'Розовые бусики', /* 1. НАЗВАНИЕ */
+            '10 000 ₽',       /* 2. ЦЕНА */
+            'Тут подробное описание товара №1. Можно писать длинный текст.', /* 3. ОПИСАНИЕ ВНУТРИ */
+            ['https://github.com/xstes/Lantsyuh/blob/main/action_292165.jpg?raw=true', 'https://github.com/xstes/Lantsyuh/blob/main/action_292381.jpg?raw=true'], /* 4. СПИСОК ФОТО (через запятую в кавычках) */
+            'доступно'        /* 5. СТАТУС (доступно / под заказ) */
+        )">
+            <div class="status-badge status-available">доступно</div> 
+            
             <img src="https://github.com/xstes/Lantsyuh/blob/main/action_292165.jpg?raw=true">
+            
             <div class="card-content">
-                <div class="title">Розовые бусики</div>
-                <div class="price">10 000 ₽</div>
-                <div class="btn" onclick="sendOrder('Розовые бусики')">В корзину</div>
-            </div>
+                <div class="title">Розовые бусики</div> <div class="price">10 000 ₽</div>        </div>
         </div>
-        
-        <div class="card">
+        <div class="card" onclick="openProduct(
+            'Коричневые бусы', 
+            '16 900 ₽', 
+            'Описание товара №2. Качественные материалы, уникальный дизайн.', 
+            ['https://github.com/xstes/Lantsyuh/blob/main/action_292381.jpg?raw=true', 'https://github.com/xstes/Lantsyuh/blob/main/action_292165.jpg?raw=true'], 
+            'под заказ'
+        )">
+            <div class="status-badge status-order">под заказ</div>
             <img src="https://github.com/xstes/Lantsyuh/blob/main/action_292381.jpg?raw=true">
             <div class="card-content">
                 <div class="title">Коричневые бусы</div>
                 <div class="price">16 900 ₽</div>
-                <div class="btn" onclick="sendOrder('Коричневые бусы')">В корзину</div>
+            </div>
+        </div>
+        </div>
+
+    <div id="productModal" class="modal">
+        <div class="close-modal" onclick="closeProduct()">&times;</div>
+        <div class="carousel" id="carousel">
+            <div class="carousel-track" id="track"></div>
+            <div class="carousel-dots" id="dots"></div>
+        </div>
+        <div class="modal-info">
+            <div id="m-status" class="m-status"></div>
+            <div id="m-title" class="m-title"></div>
+            <div id="m-price" class="m-price"></div>
+            <div id="m-desc" class="m-desc"></div>
+            <div class="btn-group" id="mainButtons">
+                <div class="btn-main" id="orderBtn">В корзину</div>
+                <div class="btn-sec" onclick="showQuestionForm()">Задать вопрос</div>
+            </div>
+            <div id="questionForm">
+                <textarea id="qInput" rows="4" placeholder="Напишите ваш вопрос..."></textarea>
+                <div class="btn-main" onclick="sendQuestion()">Отправить вопрос</div>
+                <div class="btn-sec" onclick="hideQuestionForm()" style="padding: 10px; font-size: 12px;">Отмена</div>
             </div>
         </div>
     </div>
-
     <div class="contact-footer">
-        <a href="#" class="contact-btn" onclick="sendMessage()">СВЯЗАТЬСЯ С МЕНЕДЖЕРОМ</a>
+        <a href="#" class="contact-btn" onclick="tg.sendData('Общий вопрос менеджеру')">СВЯЗАТЬСЯ С МЕНЕДЖЕРОМ</a>
     </div>
 
     <script>
         let tg = window.Telegram.WebApp;
+        let currentProductTitle = "";
         tg.expand();
 
-        // Функция заказа
-        function sendOrder(item) {
-            tg.sendData("Заказ: " + item);
+        function openProduct(title, price, desc, images, status) {
+            currentProductTitle = title;
+            document.getElementById('m-title').innerText = title;
+            document.getElementById('m-price').innerText = price;
+            document.getElementById('m-desc').innerText = desc;
+            hideQuestionForm();
+            let statusEl = document.getElementById('m-status');
+            statusEl.innerText = status.toUpperCase();
+            statusEl.style.color = (status === 'доступно') ? '#4caf50' : '#ff9800';
+            const track = document.getElementById('track');
+            const dots = document.getElementById('dots');
+            track.innerHTML = ''; dots.innerHTML = '';
+            track.style.transform = 'translateX(0)';
+            images.forEach((src, idx) => {
+                const img = document.createElement('img');
+                img.src = src;
+                track.appendChild(img);
+                const dot = document.createElement('div');
+                dot.className = 'dot' + (idx === 0 ? ' active' : '');
+                dots.appendChild(dot);
+            });
+            let currentIdx = 0;
+            track.onclick = () => {
+                currentIdx = (currentIdx + 1) % images.length;
+                track.style.transform = `translateX(-${currentIdx * 100}%)`;
+                Array.from(dots.children).forEach((d, i) => d.className = 'dot' + (i === currentIdx ? ' active' : ''));
+            };
+            document.getElementById('orderBtn').onclick = () => { tg.sendData("Заказ: " + title); closeProduct(); };
+            document.getElementById('productModal').style.display = 'block';
         }
 
-        // Функция связи
-        function sendMessage() {
-            tg.sendData("Запрос связи с менеджером");
+        function closeProduct() { document.getElementById('productModal').style.display = 'none'; }
+        function showQuestionForm() { document.getElementById('mainButtons').style.display = 'none'; document.getElementById('questionForm').style.display = 'flex'; }
+        function hideQuestionForm() { document.getElementById('mainButtons').style.display = 'flex'; document.getElementById('questionForm').style.display = 'none'; document.getElementById('qInput').value = ''; }
+        function sendQuestion() {
+            const text = document.getElementById('qInput').value;
+            if (text.trim() === "") return;
+            tg.sendData("Вопрос по [" + currentProductTitle + "]: " + text);
+            tg.close();
         }
     </script>
 </body>
