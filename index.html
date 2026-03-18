@@ -5,13 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        :root { --bg: #000; --card-bg: #111; --text: #fff; --gray: #888; --dark-btn: #333; --modal-bg: #fff; --modal-text: #000; }
+        :root { --bg: #000; --card-bg: #111; --text: #fff; --gray: #888; --accent: #fff; --toast-bg: rgba(255,255,255,0.9); --toast-text: #000; }
         body { background: var(--bg); color: var(--text); font-family: -apple-system, sans-serif; margin: 0; padding: 10px; padding-bottom: 80px; }
         .header { text-align: center; font-size: 22px; letter-spacing: 5px; margin: 20px 0 10px; font-weight: bold; }
         .main-desc { text-align: center; font-size: 13px; color: var(--gray); margin-bottom: 25px; padding: 0 10px; line-height: 1.4; }
         .container { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
         .card { background: var(--card-bg); border-radius: 12px; overflow: hidden; border: 1px solid #222; position: relative; }
+        
+        /* ГЛАВНОЕ: Фото в квадрате на витрине */
         .card img { width: 100%; aspect-ratio: 1/1; object-fit: cover; display: block; }
+        
         .status-badge { position: absolute; top: 8px; left: 8px; font-size: 9px; padding: 3px 6px; border-radius: 4px; text-transform: uppercase; font-weight: bold; background: rgba(0,0,0,0.6); }
         .status-available { color: #4caf50; }
         .status-order { color: #ff9800; }
@@ -19,154 +22,64 @@
         .title { font-size: 13px; color: var(--gray); margin-bottom: 4px; height: 32px; overflow: hidden; }
         .price { font-weight: bold; font-size: 15px; }
 
-        /* Общие стили модальных окон */
+        /* Модальные окна */
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1000; overflow-y: auto; }
-        
-        /* Кнопка закрытия (Темная) */
         .close-modal { position: fixed; top: 20px; right: 20px; z-index: 1100; background: rgba(0,0,0,0.5); color: #fff; width: 35px; height: 35px; border-radius: 50%; text-align: center; line-height: 33px; font-size: 24px; cursor: pointer; border: 1px solid #555; }
 
         /* ОКНО ОПИСАНИЯ (Темное) */
         #productModal { background: #000; color: #fff; }
-        .m-carousel { position: relative; width: 100%; aspect-ratio: 1/1; overflow: hidden; }
+        .m-carousel { position: relative; width: 100%; aspect-ratio: 1/1; overflow: hidden; background: #fff; /* Белый фон для фото */ }
         .m-carousel-track { display: flex; transition: transform 0.3s ease; height: 100%; }
-        .m-carousel-track img { width: 100%; flex-shrink: 0; object-fit: cover; }
-        .m-carousel-dots { position: absolute; bottom: 15px; width: 100%; display: flex; justify-content: center; gap: 5px; }
-        .dot { width: 6px; height: 6px; background: rgba(255,255,255,0.3); border-radius: 50%; }
-        .dot.active { background: #fff; }
+        
+        /* Главное: Фото в квадрате в карусели */
+        .m-carousel-track img { width: 100%; flex-shrink: 0; aspect-ratio: 1/1; object-fit: cover; }
+        
+        .m-carousel-dots { position: absolute; bottom: 15px; width: 100%; display: flex; justify-content: center; gap: 5px; z-index: 10; }
+        
+        /* ТОЧКИ ПЕРЕЛИСТЫВАНИЯ: Темные для видимости на белом */
+        .dot { width: 6px; height: 6px; background: rgba(0,0,0,0.3); border-radius: 50%; }
+        .dot.active { background: #000; }
+
         .modal-info { padding: 20px; }
         .m-status { font-size: 12px; margin-bottom: 10px; font-weight: bold; }
         .m-title { font-size: 24px; font-weight: bold; margin-bottom: 10px; }
         .m-price { font-size: 20px; font-weight: bold; margin-bottom: 15px; }
-        
-        /* Стили для материала и описания */
         .info-label { color: var(--gray); font-size: 12px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 3px; margin-top: 15px; }
         .m-material, .m-desc { color: #fff; line-height: 1.6; font-size: 14px; margin-bottom: 15px; }
 
         .btn-group { display: flex; flex-direction: column; gap: 10px; margin-top: 30px; }
         .btn-main { background: #fff; color: #000; text-align: center; padding: 15px; border-radius: 10px; font-weight: bold; cursor: pointer; }
         .btn-sec { background: transparent; color: #fff; border: 1px solid #333; text-align: center; padding: 15px; border-radius: 10px; font-weight: bold; cursor: pointer; }
-        #questionForm { display: none; margin-top: 20px; flex-direction: column; gap: 10px; }
-        textarea { background: #111; border: 1px solid #333; color: #fff; padding: 10px; border-radius: 8px; font-family: inherit; resize: none; }
+        
+        /* Формы вопроса */
+        #questionForm, #footerQuestionForm { display: none; margin-top: 20px; flex-direction: column; gap: 10px; }
+        textarea { background: #111; border: 1px solid #333; color: #fff; padding: 10px; border-radius: 8px; font-family: inherit; resize: none; width: 100%; box-sizing: border-radius; }
 
-        /* ОКНО ГАЛЕРЕИ (Белое, на весь экран) */
-        #galleryModal { background: #fff; z-index: 2000; overflow: hidden; display: none; align-items: center; justify-content: center; }
+        /* ОКНО ГАЛЕРЕИ (Белое) */
+        #galleryModal { background: #fff; z-index: 2000; display: none; align-items: center; justify-content: center; }
         #galleryModal img { max-width: 100%; max-height: 100%; object-fit: contain; }
         
-        .contact-footer { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,0.8); padding: 15px; text-align: center; border-top: 1px solid #222; z-index: 50; }
-        .contact-btn { color: var(--gray); font-size: 12px; text-decoration: none; border-bottom: 1px solid #444; }
+        /* Футер */
+        .contact-footer { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,0.9); padding: 15px; text-align: center; border-top: 1px solid #222; z-index: 50; }
+        .contact-btn { color: var(--gray); font-size: 12px; text-decoration: none; border-bottom: 1px solid #444; cursor: pointer; }
+
+        /* ОКНО УВЕДОМЛЕНИЯ (Toast) */
+        #toast { display: none; position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%); background: var(--toast-bg); color: var(--toast-text); padding: 10px 20px; border-radius: 20px; font-size: 14px; font-weight: bold; z-index: 3000; }
     </style>
 </head>
 <body>
 
     <div class="header">LANTSYUH</div>
-    <div class="main-desc">Твой стиль — твоя броня. <br> Лимитированные аксессуары ручной работы.</div>
+    <div class="main-desc">Лимитированные аксессуары ручной работы. <br> Твой стиль — твоя броня.</div>
     
     <div class="container">
-
-        <div class="card" onclick="openProduct(
-            'Розовые бусики', /* 1. НАЗВАНИЕ */
-            '10 000 ₽',       /* 2. ЦЕНА */
-            'Натуральный камень, сталь', /* 3. МАТЕРИАЛ (Новое поле!) */
-            'Тут подробное описание товара №1. Можно писать длинный текст.', /* 4. ОПИСАНИЕ ВНУТРИ */
-            ['https://github.com/xstes/Lantsyuh/blob/main/action_292165.jpg?raw=true', 'https://github.com/xstes/Lantsyuh/blob/main/action_292381.jpg?raw=true'], /* 5. СПИСОК ФОТО */
-            'доступно'        /* 6. СТАТУС */
-        )">
-            <div class="status-badge status-available">доступно</div> 
-            <img src="https://github.com/xstes/Lantsyuh/blob/main/action_292165.jpg?raw=true">
-            <div class="card-content">
-                <div class="title">Розовые бусики</div>
-                <div class="price">10 000 ₽</div>
-            </div>
+        <div class="card" onclick="openProduct('Розовые бусики', '10 000 ₽', 'Натуральный камень, сталь', 'Тут описание.', ['https://github.com/xstes/Lantsyuh/blob/main/action_292165.jpg?raw=true'], 'доступно')">
+            <div class="status-badge status-available">доступно</div><img src="https://github.com/xstes/Lantsyuh/blob/main/action_292165.jpg?raw=true">
+            <div class="card-content"><div class="title">Розовые бусики</div><div class="price">10 000 ₽</div></div>
         </div>
-        <div class="card" onclick="openProduct(
-            'Коричневые бусы', 
-            '16 900 ₽', 
-            'Агат, кожа, фурнитура темная',
-            'Описание товара №2. Качественные материалы, уникальный дизайн.', 
-            ['https://github.com/xstes/Lantsyuh/blob/main/action_292381.jpg?raw=true', 'https://github.com/xstes/Lantsyuh/blob/main/action_292165.jpg?raw=true'], 
-            'под заказ'
-        )">
-            <div class="status-badge status-order">под заказ</div>
-            <img src="https://github.com/xstes/Lantsyuh/blob/main/action_292381.jpg?raw=true">
-            <div class="card-content">
-                <div class="title">Коричневые бусы</div>
-                <div class="price">16 900 ₽</div>
-            </div>
-        </div>
-        <div class="card" onclick="openProduct(
-            'Аксессуар r2o', 
-            '14 000 ₽', 
-            'Металл, родиевое покрытие',
-            'Стильное решение из новой коллекции. Легкий и прочный.', 
-            ['https://github.com/xstes/Lantsyuh/blob/main/Gemini_Generated_Image_r2oiyjr2oiyjr2oi.png?raw=true'], 
-            'доступно'
-        )">
-            <div class="status-badge status-available">доступно</div>
-            <img src="https://github.com/xstes/Lantsyuh/blob/main/Gemini_Generated_Image_r2oiyjr2oiyjr2oi.png?raw=true">
-            <div class="card-content">
-                <div class="title">Аксессуар r2o</div>
-                <div class="price">14 000 ₽</div>
-            </div>
-        </div>
-        <div class="card" onclick="openProduct(
-            'Аксессуар 1de', 
-            '18 500 ₽', 
-            'Серебро 925, чернение',
-            'Премиум модель. Каждое звено обработано вручную.', 
-            ['https://github.com/xstes/Lantsyuh/blob/main/Gemini_Generated_Image_1de2rj1de2rj1de2.png?raw=true'], 
-            'под заказ'
-        )">
-            <div class="status-badge status-order">под заказ</div>
-            <img src="https://github.com/xstes/Lantsyuh/blob/main/Gemini_Generated_Image_1de2rj1de2rj1de2.png?raw=true">
-            <div class="card-content">
-                <div class="title">Аксессуар 1de</div>
-                <div class="price">18 500 ₽</div>
-            </div>
-        </div>
-        <div class="card" onclick="openProduct(
-            'Аксессуар cds', 
-            '15 900 ₽', 
-            'Сталь хирургическая 316L',
-            'Не тускнеет, не вызывает аллергии. Надежный замок.', 
-            ['https://github.com/xstes/Lantsyuh/blob/main/Gemini_Generated_Image_cdsf5lcdsf5lcdsf.png?raw=true'], 
-            'доступно'
-        )">
-            <div class="status-badge status-available">доступно</div>
-            <img src="https://github.com/xstes/Lantsyuh/blob/main/Gemini_Generated_Image_cdsf5lcdsf5lcdsf.png?raw=true">
-            <div class="card-content">
-                <div class="title">Аксессуар cds</div>
-                <div class="price">15 900 ₽</div>
-            </div>
-        </div>
-        <div class="card" onclick="openProduct(
-            'Аксессуар g2u', 
-            '22 000 ₽', 
-            'Золото 585 (покрытие), сталь',
-            'Эксклюзивный дизайн. Лимитированная серия Lantsyuh.', 
-            ['https://github.com/xstes/Lantsyuh/blob/main/Gemini_Generated_Image_g2un7yg2un7yg2un.png?raw=true'], 
-            'доступно'
-        )">
-            <div class="status-badge status-available">доступно</div>
-            <img src="https://github.com/xstes/Lantsyuh/blob/main/Gemini_Generated_Image_g2un7yg2un7yg2un.png?raw=true">
-            <div class="card-content">
-                <div class="title">Аксессуар g2u</div>
-                <div class="price">22 000 ₽</div>
-            </div>
-        </div>
-        <div class="card" onclick="openProduct(
-            'Аксессуар tei', 
-            '19 900 ₽', 
-            'Титан, матовое покрытие',
-            'Легкий, прочный, гипоаллергенный. Футуристичный вид.', 
-            ['https://github.com/xstes/Lantsyuh/blob/main/Gemini_Generated_Image_teiuu0teiuu0teiu.png?raw=true'], 
-            'под заказ'
-        )">
-            <div class="status-badge status-order">под заказ</div>
-            <img src="https://github.com/xstes/Lantsyuh/blob/main/Gemini_Generated_Image_teiuu0teiuu0teiu.png?raw=true">
-            <div class="card-content">
-                <div class="title">Аксессуар tei</div>
-                <div class="price">19 900 ₽</div>
-            </div>
+        <div class="card" onclick="openProduct('Коричневые бусы', '16 900 ₽', 'Агат, кожа', 'Тут описание.', ['https://github.com/xstes/Lantsyuh/blob/main/action_292381.jpg?raw=true'], 'под заказ')">
+            <div class="status-badge status-order">под заказ</div><img src="https://github.com/xstes/Lantsyuh/blob/main/action_292381.jpg?raw=true">
+            <div class="card-content"><div class="title">Коричневые бусы</div><div class="price">16 900 ₽</div></div>
         </div>
         </div>
 
@@ -177,36 +90,35 @@
             <div class="m-carousel-dots" id="dots"></div>
         </div>
         <div class="modal-info">
-            <div id="m-status" class="m-status"></div>
-            <div id="m-title" class="m-title"></div>
-            <div id="m-price" class="m-price"></div>
-            
-            <div class="info-label">Материал</div>
-            <div id="m-material" class="m-material"></div>
-            
-            <div class="info-label">Описание</div>
-            <div id="m-desc" class="m-desc"></div>
-            
+            <div id="m-status" class="m-status"></div><div id="m-title" class="m-title"></div><div id="m-price" class="m-price"></div>
+            <div class="info-label">Материал</div><div id="m-material" class="m-material"></div>
+            <div class="info-label">Описание</div><div id="m-desc" class="m-desc"></div>
             <div class="btn-group" id="mainButtons">
                 <div class="btn-main" id="orderBtn">В корзину</div>
                 <div class="btn-sec" onclick="showQuestionForm()">Задать вопрос</div>
             </div>
             <div id="questionForm">
                 <textarea id="qInput" rows="4" placeholder="Напишите ваш вопрос..."></textarea>
-                <div class="btn-main" onclick="sendQuestion()">Отправить вопрос</div>
+                <div class="btn-main" onclick="sendQuestion()">Отправить</div>
                 <div class="btn-sec" onclick="hideQuestionForm()" style="padding: 10px; font-size: 12px;">Отмена</div>
             </div>
         </div>
     </div>
 
-    <div id="galleryModal" class="modal" onclick="closeGallery()">
-        <div class="close-modal">&times;</div>
-        <img id="galleryImg" src="">
-    </div>
+    <div id="galleryModal" class="modal" onclick="closeGallery()"><div class="close-modal">&times;</div><img id="galleryImg" src=""></div>
 
     <div class="contact-footer">
-        <a href="#" class="contact-btn" onclick="tg.sendData('Общий вопрос менеджеру')">СВЯЗАТЬСЯ С МЕНЕДЖЕРОМ</a>
+        <div id="footerMainBtns">
+            <a href="#" class="contact-btn" onclick="showFooterQuestion()">СВЯЗАТЬСЯ С МЕНЕДЖЕРОМ</a>
+        </div>
+        <div id="footerQuestionForm">
+            <textarea id="fqInput" rows="3" placeholder="Ваше сообщение..."></textarea>
+            <div class="btn-main" onclick="sendFooterQuestion()" style="padding: 10px; font-size: 14px; margin-top: 10px;">Отправить</div>
+            <div class="btn-sec" onclick="hideFooterQuestion()" style="padding: 5px; font-size: 11px; margin-top: 5px; border:none; opacity: 0.5;">Отмена</div>
+        </div>
     </div>
+
+    <div id="toast">Успешно!</div>
 
     <script>
         let tg = window.Telegram.WebApp;
@@ -214,6 +126,13 @@
         let currentProductPhotos = [];
         let carouselCurrentIdx = 0;
         tg.expand();
+
+        // Функция Toast (Уведомление)
+        function showToast() {
+            const toast = document.getElementById('toast');
+            toast.style.display = 'block';
+            setTimeout(() => { toast.style.display = 'none'; }, 2000);
+        }
 
         function openProduct(title, price, material, desc, images, status) {
             currentProductTitle = title;
@@ -235,7 +154,6 @@
             images.forEach((src, idx) => {
                 const img = document.createElement('img');
                 img.src = src;
-                // Клик по фото в карусели открывает Галерею
                 img.onclick = function() { openGallery(src); };
                 track.appendChild(img);
                 const dot = document.createElement('div');
@@ -243,39 +161,59 @@
                 dots.appendChild(dot);
             });
 
-            document.getElementById('orderBtn').onclick = () => { tg.sendData("Заказ: " + title); closeProduct(); };
+            // При нажатии "В корзину" приложение НЕ закрывается
+            document.getElementById('orderBtn').onclick = () => { 
+                tg.sendData("Заказ: " + title); 
+                closeProduct(); 
+                showToast(); // Показываем уведомление
+            };
             document.getElementById('productModal').style.display = 'block';
         }
 
-        // Логика свайпа/клика по карусели
+        // Логика карусели
         document.getElementById('track').parentElement.addEventListener('click', function(e) {
-            // Если кликнули не по самой картинке (img), а по контейнеру, листаем карусель
             if (e.target.tagName !== 'IMG') {
                 if (currentProductPhotos.length <= 1) return;
                 carouselCurrentIdx = (carouselCurrentIdx + 1) % currentProductPhotos.length;
                 document.getElementById('track').style.transform = `translateX(-${carouselCurrentIdx * 100}%)`;
                 Array.from(document.getElementById('dots').children).forEach((d, i) => d.className = 'dot' + (i === carouselCurrentIdx ? ' active' : ''));
             }
-        }, true); // Используем capturing чтобы поймать клик до img, но img.onclick сработает если кликнули по img
+        }, true);
 
         function closeProduct() { document.getElementById('productModal').style.display = 'none'; }
-        
-        function openGallery(src) {
-            document.getElementById('galleryImg').src = src;
-            document.getElementById('galleryModal').style.display = 'flex';
-        }
-        function closeGallery() {
-            // При закрытии Галереи мы возвращаемся в Карточку
-            document.getElementById('galleryModal').style.display = 'none';
-        }
+        function openGallery(src) { document.getElementById('galleryImg').src = src; document.getElementById('galleryModal').style.display = 'flex'; }
+        function closeGallery() { document.getElementById('galleryModal').style.display = 'none'; }
 
+        // Формы вопроса
         function showQuestionForm() { document.getElementById('mainButtons').style.display = 'none'; document.getElementById('questionForm').style.display = 'flex'; }
         function hideQuestionForm() { document.getElementById('mainButtons').style.display = 'flex'; document.getElementById('questionForm').style.display = 'none'; document.getElementById('qInput').value = ''; }
+        
+        // Отправка вопроса из карточки
         function sendQuestion() {
             const text = document.getElementById('qInput').value;
             if (text.trim() === "") return;
             tg.sendData("Вопрос по [" + currentProductTitle + "]: " + text);
-            tg.close();
+            hideQuestionForm();
+            closeProduct();
+            showToast(); // Приложение НЕ закрывается
+        }
+
+        // Логика футера (Связь с менеджером)
+        function showFooterQuestion() {
+            document.getElementById('footerMainBtns').style.display = 'none';
+            document.getElementById('footerQuestionForm').style.display = 'flex';
+        }
+        function hideFooterQuestion() {
+            document.getElementById('footerMainBtns').style.display = 'flex';
+            document.getElementById('footerQuestionForm').style.display = 'none';
+            document.getElementById('fqInput').value = '';
+        }
+        function sendFooterQuestion() {
+            const text = document.getElementById('fqInput').value;
+            if (text.trim() === "") return;
+            tg.sendData("Сообщение менеджеру: " + text);
+            hideFooterQuestion();
+            showToast(); // Приложение НЕ закрывается
         }
     </script>
 </body>
