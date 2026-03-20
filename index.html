@@ -11,31 +11,34 @@
         .header { text-align: center; font-size: 22px; letter-spacing: 5px; margin: 20px 0 10px; font-weight: bold; }
         .main-desc { text-align: center; font-size: 13px; color: var(--gray); margin-bottom: 25px; line-height: 1.4; }
         
-        .container { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .container { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
         .card { background: var(--card-bg); border-radius: 12px; overflow: hidden; border: 1px solid #222; position: relative; }
-        .card img { width: 100%; aspect-ratio: 1/1; object-fit: cover; display: block; }
         
-        .status-badge { position: absolute; top: 8px; left: 8px; font-size: 9px; padding: 3px 6px; border-radius: 4px; text-transform: uppercase; font-weight: bold; background: rgba(0,0,0,0.6); z-index: 5; }
+        /* ИСПРАВЛЕНИЕ: Фото теперь не режется */
+        .card-img-wrapper { width: 100%; aspect-ratio: 1/1; background: #080808; display: flex; align-items: center; justify-content: center; }
+        .card img { max-width: 100%; max-height: 100%; object-fit: contain; display: block; }
+        
+        .status-badge { position: absolute; top: 8px; left: 8px; font-size: 8px; padding: 3px 6px; border-radius: 4px; text-transform: uppercase; font-weight: bold; background: rgba(0,0,0,0.7); z-index: 5; }
         .status-available { color: #4caf50; }
         .status-order { color: #ff9800; }
         
         .card-content { padding: 10px; }
-        .title { font-size: 13px; color: var(--gray); margin-bottom: 4px; height: 32px; overflow: hidden; }
-        .price { font-weight: bold; font-size: 15px; }
+        .title { font-size: 12px; color: var(--gray); margin-bottom: 4px; height: 30px; overflow: hidden; line-height: 1.2; }
+        .price { font-weight: bold; font-size: 14px; }
 
-        /* Модалка товара */
+        /* Модалка */
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1000; background: #000; overflow-y: auto; }
         .close-modal { position: fixed; top: 20px; right: 20px; z-index: 1100; background: rgba(0,0,0,0.5); color: #fff; width: 35px; height: 35px; border-radius: 50%; text-align: center; line-height: 33px; font-size: 24px; cursor: pointer; border: 1px solid #555; }
 
-        /* Карусель */
-        .m-carousel { position: relative; width: 100%; aspect-ratio: 1/1; overflow: hidden; background: #fff; }
-        .m-carousel-track { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: smooth; height: 100%; -webkit-overflow-scrolling: touch; }
+        /* Карусель (внутри карточки) */
+        .m-carousel { position: relative; width: 100%; aspect-ratio: 1/1; overflow: hidden; background: #000; display: flex; align-items: center; }
+        .m-carousel-track { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: smooth; height: 100%; width: 100%; -webkit-overflow-scrolling: touch; }
         .m-carousel-track::-webkit-scrollbar { display: none; }
-        .m-carousel-track img { width: 100%; flex-shrink: 0; scroll-snap-align: start; object-fit: cover; }
+        .m-carousel-track img { width: 100%; flex-shrink: 0; scroll-snap-align: start; object-fit: contain; }
         
         .m-carousel-dots { position: absolute; bottom: 15px; width: 100%; display: flex; justify-content: center; gap: 5px; pointer-events: none; }
-        .dot { width: 6px; height: 6px; background: rgba(0,0,0,0.2); border-radius: 50%; }
-        .dot.active { background: rgba(0,0,0,0.6); transform: scale(1.2); }
+        .dot { width: 6px; height: 6px; background: rgba(255,255,255,0.3); border-radius: 50%; }
+        .dot.active { background: #fff; transform: scale(1.2); }
 
         .modal-info { padding: 20px; }
         .m-title { font-size: 24px; font-weight: bold; margin-bottom: 10px; }
@@ -47,14 +50,13 @@
         .btn-main { background: #fff; color: #000; text-align: center; padding: 15px; border-radius: 10px; font-weight: bold; cursor: pointer; }
         .btn-sec { background: transparent; color: #fff; border: 1px solid #333; text-align: center; padding: 15px; border-radius: 10px; font-weight: bold; cursor: pointer; }
         
-        /* Формы ввода */
         .form-box { display: none; flex-direction: column; gap: 10px; margin-top: 20px; }
-        textarea { background: #111; border: 1px solid #333; color: #fff; padding: 12px; border-radius: 8px; font-family: inherit; resize: none; width: 100%; box-sizing: border-box; }
+        textarea { background: #111; border: 1px solid #333; color: #fff; padding: 12px; border-radius: 8px; font-family: inherit; resize: none; width: 100%; box-sizing: border-box; outline: none; }
 
-        #toast { display: none; position: fixed; bottom: 110px; left: 50%; transform: translateX(-50%); background: rgba(255,255,255,0.95); color: #000; padding: 10px 20px; border-radius: 20px; font-size: 14px; font-weight: bold; z-index: 2000; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
+        #toast { display: none; position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: #fff; color: #000; padding: 12px 24px; border-radius: 30px; font-size: 14px; font-weight: bold; z-index: 3000; box-shadow: 0 5px 20px rgba(0,0,0,0.5); }
 
-        .footer { padding: 30px 20px 50px; text-align: center; }
-        .contact-btn { color: var(--gray); font-size: 12px; border-bottom: 1px solid #333; cursor: pointer; display: inline-block; }
+        .footer { padding: 40px 20px; text-align: center; }
+        .contact-btn { color: var(--gray); font-size: 12px; text-decoration: underline; cursor: pointer; }
     </style>
 </head>
 <body>
@@ -67,9 +69,9 @@
     <div class="footer">
         <div id="footerBtn" class="contact-btn" onclick="showFooterForm()">СВЯЗАТЬСЯ С МЕНЕДЖЕРОМ</div>
         <div id="footerForm" class="form-box">
-            <textarea id="footerInput" rows="3" placeholder="Ваш вопрос менеджеру..."></textarea>
-            <div class="btn-main" onclick="sendFooterMsg()">ОТПРАВИТЬ</div>
-            <div class="btn-sec" onclick="hideFooterForm()" style="border:none; font-size:12px; opacity:0.5;">ОТМЕНА</div>
+            <textarea id="footerInput" rows="3" placeholder="Ваш вопрос..."></textarea>
+            <div class="btn-main" onclick="sendMsg('manager')">ОТПРАВИТЬ</div>
+            <div class="btn-sec" onclick="hideFooterForm()">ОТМЕНА</div>
         </div>
     </div>
 
@@ -80,32 +82,32 @@
             <div class="m-carousel-dots" id="dots"></div>
         </div>
         <div class="modal-info">
-            <div id="m-status" style="font-size: 12px; font-weight: bold; margin-bottom: 5px;"></div>
+            <div id="m-status" style="font-size: 11px; font-weight: bold; margin-bottom: 5px;"></div>
             <div id="m-title" class="m-title"></div>
             <div id="m-price" class="m-price"></div>
             <div class="info-label">Материал</div><div id="m-material" class="m-material"></div>
             <div class="info-label">Описание</div><div id="m-desc" class="m-desc"></div>
             
             <div id="prodBtns" class="btn-group">
-                <div class="btn-main" id="cartAction">В корзину</div>
+                <div class="btn-main" onclick="sendMsg('order')">В корзину</div>
                 <div class="btn-sec" onclick="showProdForm()">Задать вопрос</div>
             </div>
 
             <div id="prodForm" class="form-box">
-                <textarea id="prodInput" rows="3" placeholder="Ваш вопрос по этому украшению..."></textarea>
-                <div class="btn-main" onclick="sendProdQuestion()">ОТПРАВИТЬ ВОПРОС</div>
-                <div class="btn-sec" onclick="hideProdForm()" style="border:none; font-size:12px; opacity:0.5;">ОТМЕНА</div>
+                <textarea id="prodInput" rows="3" placeholder="Ваш вопрос по этому изделию..."></textarea>
+                <div class="btn-main" onclick="sendMsg('question')">ОТПРАВИТЬ</div>
+                <div class="btn-sec" onclick="hideProdForm()">ОТМЕНА</div>
             </div>
         </div>
     </div>
 
-    <div id="toast">Добавлено!</div>
+    <div id="toast"></div>
 
     <script>
         let tg = window.Telegram.WebApp;
-        let currentPName = "";
+        let currentP = null;
         tg.expand();
-        tg.MainButton.hide();
+        tg.enableClosingConfirmation(); // Предупредит, если случайно захотите закрыть
 
         const products = [
             { name: 'GLEAM', price: '3800₽', mat: 'Агат, кварц', desc: 'Игра света в каждой грани натуральных камней.', status: 'доступно', imgs: ['https://github.com/xstes/Lantsyuh/blob/main/IMG/GLEAM/GLEAM%203.PNG?raw=true', 'https://github.com/xstes/Lantsyuh/blob/main/IMG/GLEAM/GLEAM%202.JPG?raw=true', 'https://github.com/xstes/Lantsyuh/blob/main/IMG/GLEAM/GLEAM.JPG?raw=true'] },
@@ -126,13 +128,20 @@
         products.forEach(p => {
             const card = document.createElement('div');
             card.className = 'card';
-            card.innerHTML = `<div class="status-badge ${p.status === 'доступно' ? 'status-available' : 'status-order'}">${p.status}</div><img src="${p.imgs[0]}"><div class="card-content"><div class="title">${p.name}</div><div class="price">${p.price}</div></div>`;
+            card.innerHTML = `
+                <div class="status-badge ${p.status === 'доступно' ? 'status-available' : 'status-order'}">${p.status}</div>
+                <div class="card-img-wrapper"><img src="${p.imgs[0]}"></div>
+                <div class="card-content">
+                    <div class="title">${p.name}</div>
+                    <div class="price">${p.price}</div>
+                </div>
+            `;
             card.onclick = () => openProduct(p);
             catalog.appendChild(card);
         });
 
         function openProduct(p) {
-            currentPName = p.name;
+            currentP = p;
             document.getElementById('m-title').innerText = p.name;
             document.getElementById('m-price').innerText = p.price;
             document.getElementById('m-material').innerText = p.mat;
@@ -156,49 +165,49 @@
             };
 
             hideProdForm();
-            document.getElementById('cartAction').onclick = () => {
-                tg.MainButton.setParams({ text: "ПОДТВЕРДИТЬ ЗАКАЗ: " + p.name, color: "#ffffff", text_color: "#000000" });
-                tg.MainButton.show();
-                tg.MainButton.offClick(finalSend); // Очистка старых событий
-                tg.MainButton.onClick(finalSend);
-                closeProduct();
-                showToast("Нажмите белую кнопку внизу");
-            };
-
             document.getElementById('productModal').style.display = 'block';
         }
 
-        const finalSend = () => { tg.sendData(tg.MainButton.text); };
-
         function closeProduct() { document.getElementById('productModal').style.display = 'none'; }
-        function showToast(txt) { const t = document.getElementById('toast'); t.innerText = txt; t.style.display = 'block'; setTimeout(() => t.style.display = 'none', 3000); }
+        
+        // ГЛАВНАЯ ФУНКЦИЯ ОТПРАВКИ (БЕЗ ВЫЛЕТА)
+        function sendMsg(type) {
+            let text = "";
+            if (type === 'order') text = "Заказ: " + currentP.name;
+            if (type === 'question') text = "Вопрос по [" + currentP.name + "]: " + document.getElementById('prodInput').value;
+            if (type === 'manager') text = "Сообщение менеджеру: " + document.getElementById('footerInput').value;
 
-        // Функции для форм
-        function showProdForm() { document.getElementById('prodBtns').style.display = 'none'; document.getElementById('prodForm').style.display = 'flex'; }
-        function hideProdForm() { document.getElementById('prodBtns').style.display = 'flex'; document.getElementById('prodForm').style.display = 'none'; document.getElementById('prodInput').value = ''; }
-        function sendProdQuestion() {
-            const val = document.getElementById('prodInput').value;
-            if (!val.trim()) return;
-            tg.MainButton.setParams({ text: "ОТПРАВИТЬ ВОПРОС ПО " + currentPName, color: "#ffffff", text_color: "#000000" });
+            if ((type === 'question' || type === 'manager') && text.length < 5) return;
+
+            // Используем MainButton только как финальный триггер
+            tg.MainButton.setText("ПОДТВЕРДИТЬ И ОТПРАВИТЬ");
             tg.MainButton.show();
-            tg.MainButton.offClick(finalSend);
-            tg.MainButton.onClick(() => { tg.sendData("Вопрос по [" + currentPName + "]: " + val); });
+            
+            // Чтобы не плодить обработчики, сначала очищаем
+            tg.MainButton.offClick(executeSend); 
+            tg.MainButton.onClick(executeSend);
+
+            window.lastText = text; // Сохраняем текст
+            showToast("Нажмите кнопку внизу для подтверждения");
             closeProduct();
-            showToast("Нажмите белую кнопку внизу");
+            hideFooterForm();
         }
 
-        function showFooterForm() { document.getElementById('footerBtn').style.display = 'none'; document.getElementById('footerForm').style.display = 'flex'; }
-        function hideFooterForm() { document.getElementById('footerBtn').style.display = 'inline-block'; document.getElementById('footerForm').style.display = 'none'; document.getElementById('footerInput').value = ''; }
-        function sendFooterMsg() {
-            const val = document.getElementById('footerInput').value;
-            if (!val.trim()) return;
-            tg.MainButton.setParams({ text: "ОТПРАВИТЬ СООБЩЕНИЕ МЕНЕДЖЕРУ", color: "#ffffff", text_color: "#000000" });
-            tg.MainButton.show();
-            tg.MainButton.offClick(finalSend);
-            tg.MainButton.onClick(() => { tg.sendData("Сообщение менеджеру: " + val); });
-            hideFooterForm();
-            showToast("Нажмите белую кнопку внизу");
+        function executeSend() {
+            tg.sendData(window.lastText);
+            tg.MainButton.hide();
         }
+
+        function showToast(txt) {
+            const t = document.getElementById('toast');
+            t.innerText = txt; t.style.display = 'block';
+            setTimeout(() => t.style.display = 'none', 3000);
+        }
+
+        function showProdForm() { document.getElementById('prodBtns').style.display = 'none'; document.getElementById('prodForm').style.display = 'flex'; }
+        function hideProdForm() { document.getElementById('prodBtns').style.display = 'flex'; document.getElementById('prodForm').style.display = 'none'; }
+        function showFooterForm() { document.getElementById('footerBtn').style.display = 'none'; document.getElementById('footerForm').style.display = 'flex'; }
+        function hideFooterForm() { document.getElementById('footerBtn').style.display = 'inline-block'; document.getElementById('footerForm').style.display = 'none'; }
     </script>
 </body>
 </html>
