@@ -66,7 +66,7 @@
             <div class="info-label">Описание</div><div id="m-desc" class="m-desc"></div>
             <div class="btn-group">
                 <div class="btn-main" id="orderBtn">В корзину</div>
-                <div class="btn-sec" onclick="tg.sendData('Вопрос по товару: ' + currentProductTitle); showToast('Запрос отправлен');">Задать вопрос</div>
+                <div class="btn-sec" id="askBtn">Задать вопрос</div>
             </div>
         </div>
     </div>
@@ -76,25 +76,35 @@
     <script>
         let tg = window.Telegram.WebApp;
         let currentProductTitle = "";
+        let pendingData = ""; // Храним текст для отправки
         tg.expand();
 
-        // ВЕСЬ ТВОЙ КАТАЛОГ ТУТ:
+        // Настройка MainButton (чтобы не вылетало)
+        tg.MainButton.setParams({
+            text: "ПОДТВЕРДИТЬ ЗАКАЗ",
+            color: "#ffffff",
+            text_color: "#000000"
+        });
+
+        tg.MainButton.onClick(function() {
+            tg.sendData(pendingData); // Вот тут бот закроется, но только ПОСЛЕ нажатия этой кнопки
+        });
+
         const products = [
-            { name: 'GLEAM', price: '3800₽', mat: 'Агат, кварц', desc: 'Игра света в каждой грани натуральных камней. Лаконичное и глубокое украшение.', status: 'доступно', imgs: ['https://github.com/xstes/Lantsyuh/blob/main/IMG/GLEAM/GLEAM%203.PNG?raw=true', 'https://github.com/xstes/Lantsyuh/blob/main/IMG/GLEAM/GLEAM%202.JPG?raw=true', 'https://github.com/xstes/Lantsyuh/blob/main/IMG/GLEAM/GLEAM.JPG?raw=true'] },
-            { name: 'RAY', price: '3800₽', mat: 'Красная яшма', desc: 'Яркая энергия яшмы, притягивающая взгляды. Теплый и сильный акцент.', status: 'доступно', imgs: ['https://github.com/xstes/Lantsyuh/blob/main/IMG/RAY/RAY.PNG?raw=true', 'https://github.com/xstes/Lantsyuh/blob/main/IMG/RAY/RAY%202%20.JPG?raw=true', 'https://github.com/xstes/Lantsyuh/blob/main/IMG/RAY/RAY%203.JPG?raw=true'] },
-            { name: 'ALBA', price: '4200₽', mat: 'Разноцветный агат, горный хрусталь', desc: 'Уникальный узор природы. Цвет и порядок камней может отличаться от фото.', status: 'доступно', imgs: ['https://github.com/xstes/Lantsyuh/blob/main/IMG/ALBA/ALBA%201.PNG?raw=true', 'https://github.com/xstes/Lantsyuh/blob/main/IMG/ALBA/ALBA.JPG?raw=true'] },
-            { name: 'MOON', price: '3800₽', mat: 'Молочный кварц', desc: 'Мистическое сияние ночного светила в минималистичном исполнении.', status: 'доступно', imgs: ['https://github.com/xstes/Lantsyuh/blob/main/IMG/MOON/MOON%203.PNG?raw=true', 'https://github.com/xstes/Lantsyuh/blob/main/IMG/MOON/MOON%202.JPG?raw=true', 'https://github.com/xstes/Lantsyuh/blob/main/IMG/MOON/MOON.JPG?raw=true'] },
-            { name: 'LUME', price: '3500₽', mat: 'Молочный кварц, мед. сталь', desc: 'Изящные серьги, сочетающие нежность камня и современную надежность.', status: 'под заказ', imgs: ['https://github.com/xstes/Lantsyuh/blob/main/IMG/LUME/LUME%203.PNG?raw=true', 'https://github.com/xstes/Lantsyuh/blob/main/IMG/LUME/LUME%202.JPG?raw=true', 'https://github.com/xstes/Lantsyuh/blob/main/IMG/LUME/LUME.JPG?raw=true'] },
-            { name: 'FLOWER GUM', price: '4000₽', mat: 'Розовый кошачий глаз', desc: 'Массивный чокер с мягким свечением камня. Смелое заявление.', status: 'доступно', imgs: ['https://github.com/xstes/Lantsyuh/blob/main/IMG/FLOWER%20GUM/FLOWER%20GUM.JPG?raw=true', 'https://github.com/xstes/Lantsyuh/blob/main/IMG/FLOWER%20GUM/FLOWER%20GUM%201.JPG?raw=true'] },
-            { name: 'TIGA', price: '3900₽', mat: 'Тигровый глаз', desc: 'Оберег и украшение. Насыщенный золотисто-коричневый перелив камня.', status: 'доступно', imgs: ['https://github.com/xstes/Lantsyuh/blob/main/IMG/TIGA/TIGA.JPG?raw=true', 'https://github.com/xstes/Lantsyuh/blob/main/IMG/TIGA/TIGA%202.JPG?raw=true', 'https://github.com/xstes/Lantsyuh/blob/main/IMG/TIGA/TIGA%201.JPG?raw=true'] },
-            { name: 'AZUL', price: '3800₽', mat: 'Лазурит', desc: 'Глубина ночного неба с золотистыми искрами пирита.', status: 'доступно', imgs: ['https://github.com/xstes/Lantsyuh/blob/main/IMG/AZUL/AZUL.PNG?raw=true'] },
-            { name: 'SOLA', price: '4200₽', mat: 'Гематит, кошачий глаз', desc: 'Элегантный чокер, сочетающий холод гематита и магию кошачьего глаза.', status: 'доступно', imgs: ['https://github.com/xstes/Lantsyuh/blob/main/IMG/SOLA/SOLA.PNG?raw=true', 'https://github.com/xstes/Lantsyuh/blob/main/IMG/SOLA/SOLA%201.JPG?raw=true', 'https://github.com/xstes/Lantsyuh/blob/main/IMG/SOLA/Sola%202.jpeg?raw=true'] },
-            { name: 'BLACKOUT Bracelet', price: '3500₽', mat: 'Черный оникс', desc: 'Строгий браслет из черного оникса. Ничего лишнего.', status: 'доступно', imgs: ['https://github.com/xstes/Lantsyuh/blob/main/IMG/BLACKOUT/BLACKOUT.PNG?raw=true'] },
-            { name: 'BLACKOUT Neck', price: '4200₽', mat: 'Черный оникс', desc: 'Текстурный черный оникс в массивном шейном украшении.', status: 'доступно', imgs: ['https://github.com/xstes/Lantsyuh/blob/main/IMG/BLACKOUT%20NECK/BLACKOUT%20NECK.PNG?raw=true', 'https://github.com/xstes/Lantsyuh/blob/main/IMG/BLACKOUT%20NECK/BLACKOUT%20NECK%201.JPG?raw=true'] },
-            { name: 'GRAY', price: '4200₽', mat: 'Окаменелый коралл', desc: 'Редкий материал с уникальным природным рисунком древности.', status: 'доступно', imgs: ['https://github.com/xstes/Lantsyuh/blob/main/IMG/GRAY/GRAY.PNG?raw=true', 'https://github.com/xstes/Lantsyuh/blob/main/IMG/GRAY/GRAY%201.JPG?raw=true'] }
+            { name: 'GLEAM', price: '3800₽', mat: 'Агат, кварц', desc: 'Игра света в каждой грани натуральных камней.', status: 'доступно', imgs: ['https://github.com/xstes/Lantsyuh/blob/main/IMG/GLEAM/GLEAM%203.PNG?raw=true', 'https://github.com/xstes/Lantsyuh/blob/main/IMG/GLEAM/GLEAM%202.JPG?raw=true', 'https://github.com/xstes/Lantsyuh/blob/main/IMG/GLEAM/GLEAM.JPG?raw=true'] },
+            { name: 'RAY', price: '3800₽', mat: 'Красная яшма', desc: 'Яркая энергия яшмы, притягивающая взгляды.', status: 'доступно', imgs: ['https://github.com/xstes/Lantsyuh/blob/main/IMG/RAY/RAY.PNG?raw=true', 'https://github.com/xstes/Lantsyuh/blob/main/IMG/RAY/RAY%202%20.JPG?raw=true', 'https://github.com/xstes/Lantsyuh/blob/main/IMG/RAY/RAY%203.JPG?raw=true'] },
+            { name: 'ALBA', price: '4200₽', mat: 'Разноцветный агат, горный хрусталь', desc: 'Уникальный узор природы.', status: 'доступно', imgs: ['https://github.com/xstes/Lantsyuh/blob/main/IMG/ALBA/ALBA%201.PNG?raw=true', 'https://github.com/xstes/Lantsyuh/blob/main/IMG/ALBA/ALBA.JPG?raw=true'] },
+            { name: 'MOON', price: '3800₽', mat: 'Молочный кварц', desc: 'Мистическое сияние ночного светила.', status: 'доступно', imgs: ['https://github.com/xstes/Lantsyuh/blob/main/IMG/MOON/MOON%203.PNG?raw=true', 'https://github.com/xstes/Lantsyuh/blob/main/IMG/MOON/MOON%202.JPG?raw=true', 'https://github.com/xstes/Lantsyuh/blob/main/IMG/MOON/MOON.JPG?raw=true'] },
+            { name: 'LUME', price: '3500₽', mat: 'Молочный кварц, мед. сталь', desc: 'Изящные серьги.', status: 'под заказ', imgs: ['https://github.com/xstes/Lantsyuh/blob/main/IMG/LUME/LUME%203.PNG?raw=true', 'https://github.com/xstes/Lantsyuh/blob/main/IMG/LUME/LUME%202.JPG?raw=true', 'https://github.com/xstes/Lantsyuh/blob/main/IMG/LUME/LUME.JPG?raw=true'] },
+            { name: 'FLOWER GUM', price: '4000₽', mat: 'Розовый кошачий глаз', desc: 'Массивный чокер с мягким свечением.', status: 'доступно', imgs: ['https://github.com/xstes/Lantsyuh/blob/main/IMG/FLOWER%20GUM/FLOWER%20GUM.JPG?raw=true', 'https://github.com/xstes/Lantsyuh/blob/main/IMG/FLOWER%20GUM/FLOWER%20GUM%201.JPG?raw=true'] },
+            { name: 'TIGA', price: '3900₽', mat: 'Тигровый глаз', desc: 'Оберег и украшение.', status: 'доступно', imgs: ['https://github.com/xstes/Lantsyuh/blob/main/IMG/TIGA/TIGA.JPG?raw=true', 'https://github.com/xstes/Lantsyuh/blob/main/IMG/TIGA/TIGA%202.JPG?raw=true', 'https://github.com/xstes/Lantsyuh/blob/main/IMG/TIGA/TIGA%201.JPG?raw=true'] },
+            { name: 'AZUL', price: '3800₽', mat: 'Лазурит', desc: 'Глубина ночного неба.', status: 'доступно', imgs: ['https://github.com/xstes/Lantsyuh/blob/main/IMG/AZUL/AZUL.PNG?raw=true'] },
+            { name: 'SOLA', price: '4200₽', mat: 'Гематит, кошачий глаз', desc: 'Элегантный чокер SOLA.', status: 'доступно', imgs: ['https://github.com/xstes/Lantsyuh/blob/main/IMG/SOLA/SOLA.PNG?raw=true', 'https://github.com/xstes/Lantsyuh/blob/main/IMG/SOLA/SOLA%201.JPG?raw=true', 'https://github.com/xstes/Lantsyuh/blob/main/IMG/SOLA/Sola%202.jpeg?raw=true'] },
+            { name: 'BLACKOUT Bracelet', price: '3500₽', mat: 'Черный оникс', desc: 'Строгий браслет.', status: 'доступно', imgs: ['https://github.com/xstes/Lantsyuh/blob/main/IMG/BLACKOUT/BLACKOUT.PNG?raw=true'] },
+            { name: 'BLACKOUT Neck', price: '4200₽', mat: 'Черный оникс', desc: 'Массивное шейное украшение.', status: 'доступно', imgs: ['https://github.com/xstes/Lantsyuh/blob/main/IMG/BLACKOUT%20NECK/BLACKOUT%20NECK.PNG?raw=true', 'https://github.com/xstes/Lantsyuh/blob/main/IMG/BLACKOUT%20NECK/BLACKOUT%20NECK%201.JPG?raw=true'] },
+            { name: 'GRAY', price: '4200₽', mat: 'Окаменелый коралл', desc: 'Редкий материал.', status: 'доступно', imgs: ['https://github.com/xstes/Lantsyuh/blob/main/IMG/GRAY/GRAY.PNG?raw=true', 'https://github.com/xstes/Lantsyuh/blob/main/IMG/GRAY/GRAY%201.JPG?raw=true'] }
         ];
 
-        // Рендеринг карточек
         const catalog = document.getElementById('catalog');
         products.forEach(p => {
             const card = document.createElement('div');
@@ -103,10 +113,7 @@
             card.innerHTML = `
                 <div class="status-badge ${p.status === 'доступно' ? 'status-available' : 'status-order'}">${p.status}</div>
                 <img src="${p.imgs[0]}">
-                <div class="card-content">
-                    <div class="title">${p.name}</div>
-                    <div class="price">${p.price}</div>
-                </div>
+                <div class="card-content"><div class="title">${p.name}</div><div class="price">${p.price}</div></div>
             `;
             catalog.appendChild(card);
         });
@@ -141,11 +148,23 @@
                 Array.from(dots.children).forEach((d, i) => d.className = 'dot' + (i === idx ? ' active' : ''));
             };
 
+            // ЛОГИКА БЕЗ ВЫЛЕТА:
             document.getElementById('orderBtn').onclick = () => {
-                tg.sendData("Заказ: " + p.name);
+                pendingData = "Заказ: " + p.name;
+                tg.MainButton.setText("ПОДТВЕРДИТЬ ЗАКАЗ: " + p.name);
+                tg.MainButton.show(); // Показываем кнопку подтверждения
                 closeProduct();
-                showToast();
+                showToast("Добавлено! Нажми кнопку внизу.");
             };
+
+            document.getElementById('askBtn').onclick = () => {
+                pendingData = "Вопрос по товару: " + p.name;
+                tg.MainButton.setText("ОТПРАВИТЬ ВОПРОС ПО " + p.name);
+                tg.MainButton.show();
+                closeProduct();
+                showToast("Напиши вопрос в чате после подтверждения.");
+            };
+
             document.getElementById('productModal').style.display = 'block';
         }
 
@@ -153,7 +172,7 @@
         function showToast(text = "Добавлено!") {
             const t = document.getElementById('toast');
             t.innerText = text; t.style.display = 'block';
-            setTimeout(() => t.style.display = 'none', 2000);
+            setTimeout(() => t.style.display = 'none', 3000);
         }
     </script>
 </body>
