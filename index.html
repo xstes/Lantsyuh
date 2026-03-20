@@ -6,7 +6,7 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root { --bg: #000; --card-bg: #111; --text: #fff; --gray: #888; --toast-bg: rgba(255,255,255,0.9); --toast-text: #000; }
-        body { background: var(--bg); color: var(--text); font-family: -apple-system, sans-serif; margin: 0; padding: 10px; padding-bottom: 100px; }
+        body { background: var(--bg); color: var(--text); font-family: -apple-system, sans-serif; margin: 0; padding: 10px; padding-bottom: 120px; }
         .header { text-align: center; font-size: 22px; letter-spacing: 5px; margin: 20px 0 10px; font-weight: bold; }
         .main-desc { text-align: center; font-size: 13px; color: var(--gray); margin-bottom: 25px; padding: 0 10px; line-height: 1.4; }
         .container { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
@@ -39,6 +39,7 @@
         .btn-group { display: flex; flex-direction: column; gap: 10px; margin-top: 30px; }
         .btn-main { background: #fff; color: #000; text-align: center; padding: 15px; border-radius: 10px; font-weight: bold; cursor: pointer; }
         .btn-sec { background: transparent; color: #fff; border: 1px solid #333; text-align: center; padding: 15px; border-radius: 10px; font-weight: bold; cursor: pointer; }
+        
         #questionForm, #footerQuestionForm { display: none; margin-top: 20px; flex-direction: column; gap: 10px; }
         textarea { background: #111; border: 1px solid #333; color: #fff; padding: 12px; border-radius: 8px; font-family: inherit; resize: none; width: 100%; box-sizing: border-box; }
 
@@ -57,39 +58,59 @@
     
     <div class="container">
 
-        <div class="card" onclick="openProduct('Розовые бусики', '10 000 ₽', 'Натуральный кварц, сталь', 'Классическая модель в нежных тонах.', ['https://github.com/xstes/Lantsyuh/blob/main/action_292165.jpg?raw=true'], 'доступно')">
-            <div class="status-badge status-available">доступно</div><img src="https://github.com/xstes/Lantsyuh/blob/main/action_292165.jpg?raw=true">
-            <div class="card-content"><div class="title">Розовые бусики</div><div class="price">10 000 ₽</div></div>
+        <div class="card" onclick="openProduct('GLEAM', '3 800 ₽', 'Агат, кварц', 'Игра света в каждой грани натуральных камней. Лаконичное и глубокое украшение.', ['https://github.com/xstes/Lantsyuh/blob/main/IMG/GLEAM/GLEAM%203.PNG?raw=true', 'https://github.com/xstes/Lantsyuh/blob/main/IMG/GLEAM/GLEAM%202.JPG?raw=true', 'https://github.com/xstes/Lantsyuh/blob/main/IMG/GLEAM/GLEAM.JPG?raw=true'], 'доступно')">
+            <div class="status-badge status-available">доступно</div><img src="https://github.com/xstes/Lantsyuh/blob/main/IMG/GLEAM/GLEAM%203.PNG?raw=true">
+            <div class="card-content"><div class="title">Украшение GLEAM</div><div class="price">3 800 ₽</div></div>
         </div>
 
-        <div class="card" onclick="openProduct('Коричневые бусы', '16 900 ₽', 'Агат, кожа, фурнитура', 'Массивный аксессуар для уверенного образа.', ['https://github.com/xstes/Lantsyuh/blob/main/action_292381.jpg?raw=true'], 'под заказ')">
-            <div class="status-badge status-order">под заказ</div><img src="https://github.com/xstes/Lantsyuh/blob/main/action_292381.jpg?raw=true">
-            <div class="card-content"><div class="title">Коричневые бусы</div><div class="price">16 900 ₽</div></div>
+        <div class="card" onclick="openProduct('RAY', '3 800 ₽', 'Красная яшма', 'Яркая энергия яшмы, притягивающая взгляды. Теплый и сильный акцент.', ['https://github.com/xstes/Lantsyuh/blob/main/IMG/RAY/RAY.PNG?raw=true', 'https://github.com/xstes/Lantsyuh/blob/main/IMG/RAY/RAY%202%20.JPG?raw=true', 'https://github.com/xstes/Lantsyuh/blob/main/IMG/RAY/RAY%203.JPG?raw=true'], 'доступно')">
+            <div class="status-badge status-available">доступно</div><img src="https://github.com/xstes/Lantsyuh/blob/main/IMG/RAY/RAY.PNG?raw=true">
+            <div class="card-content"><div class="title">Украшение RAY</div><div class="price">3 800 ₽</div></div>
         </div>
 
-        <div class="card" onclick="openProduct('Аксессуар r2o', '14 000 ₽', 'Металл, родиевое покрытие', 'Легкий и прочный аксессуар из новой коллекции.', ['https://github.com/xstes/Lantsyuh/blob/main/Gemini_Generated_Image_r2oiyjr2oiyjr2oi.png?raw=true'], 'доступно')">
-            <div class="status-badge status-available">доступно</div><img src="https://github.com/xstes/Lantsyuh/blob/main/Gemini_Generated_Image_r2oiyjr2oiyjr2oi.png?raw=true">
-            <div class="card-content"><div class="title">Аксессуар r2o</div><div class="price">14 000 ₽</div></div>
+        <div class="card" onclick="openProduct('ALBA', '4 200 ₽', 'Разноцветный агат, горный хрусталь', 'Уникальный узор природы. Цвет и порядок камней может отличаться от фото — ваше украшение будет единственным в своем роде.', ['https://github.com/xstes/Lantsyuh/blob/main/IMG/ALBA/ALBA%201.PNG?raw=true', 'https://github.com/xstes/Lantsyuh/blob/main/IMG/ALBA/ALBA.JPG?raw=true'], 'доступно')">
+            <div class="status-badge status-available">доступно</div><img src="https://github.com/xstes/Lantsyuh/blob/main/IMG/ALBA/ALBA%201.PNG?raw=true">
+            <div class="card-content"><div class="title">Украшение ALBA</div><div class="price">4 200 ₽</div></div>
         </div>
 
-        <div class="card" onclick="openProduct('Аксессуар 1de', '18 500 ₽', 'Серебро 925, чернение', 'Премиальная модель ручной обработки.', ['https://github.com/xstes/Lantsyuh/blob/main/Gemini_Generated_Image_1de2rj1de2rj1de2.png?raw=true'], 'под заказ')">
-            <div class="status-badge status-order">под заказ</div><img src="https://github.com/xstes/Lantsyuh/blob/main/Gemini_Generated_Image_1de2rj1de2rj1de2.png?raw=true">
-            <div class="card-content"><div class="title">Аксессуар 1de</div><div class="price">18 500 ₽</div></div>
+        <div class="card" onclick="openProduct('MOON', '3 800 ₽', 'Молочный кварц', 'Мистическое сияние ночного светила в минималистичном исполнении.', ['https://github.com/xstes/Lantsyuh/blob/main/IMG/MOON/MOON%203.PNG?raw=true', 'https://github.com/xstes/Lantsyuh/blob/main/IMG/MOON/MOON%202.JPG?raw=true', 'https://github.com/xstes/Lantsyuh/blob/main/IMG/MOON/MOON.JPG?raw=true'], 'доступно')">
+            <div class="status-badge status-available">доступно</div><img src="https://github.com/xstes/Lantsyuh/blob/main/IMG/MOON/MOON%203.PNG?raw=true">
+            <div class="card-content"><div class="title">Украшение MOON</div><div class="price">3 800 ₽</div></div>
         </div>
 
-        <div class="card" onclick="openProduct('Аксессуар cds', '15 900 ₽', 'Сталь хирургическая 316L', 'Гипоаллергенный материал, надежный замок.', ['https://github.com/xstes/Lantsyuh/blob/main/Gemini_Generated_Image_cdsf5lcdsf5lcdsf.png?raw=true'], 'доступно')">
-            <div class="status-badge status-available">доступно</div><img src="https://github.com/xstes/Lantsyuh/blob/main/Gemini_Generated_Image_cdsf5lcdsf5lcdsf.png?raw=true">
-            <div class="card-content"><div class="title">Аксессуар cds</div><div class="price">15 900 ₽</div></div>
+        <div class="card" onclick="openProduct('LUME', '3 500 ₽', 'Молочный кварц, медицинская сталь', 'Изящные серьги, сочетающие нежность камня и современную надежность стали.', ['https://github.com/xstes/Lantsyuh/blob/main/IMG/LUME/LUME%203.PNG?raw=true', 'https://github.com/xstes/Lantsyuh/blob/main/IMG/LUME/LUME%202.JPG?raw=true', 'https://github.com/xstes/Lantsyuh/blob/main/IMG/LUME/LUME.JPG?raw=true'], 'под заказ')">
+            <div class="status-badge status-order">под заказ</div><img src="https://github.com/xstes/Lantsyuh/blob/main/IMG/LUME/LUME%203.PNG?raw=true">
+            <div class="card-content"><div class="title">Серьги LUME</div><div class="price">3 500 ₽</div></div>
         </div>
 
-        <div class="card" onclick="openProduct('Аксессуар g2u', '22 000 ₽', 'Золото (покрытие), сталь', 'Лимитированная серия с золотым напылением.', ['https://github.com/xstes/Lantsyuh/blob/main/Gemini_Generated_Image_g2un7yg2un7yg2un.png?raw=true'], 'доступно')">
-            <div class="status-badge status-available">доступно</div><img src="https://github.com/xstes/Lantsyuh/blob/main/Gemini_Generated_Image_g2un7yg2un7yg2un.png?raw=true">
-            <div class="card-content"><div class="title">Аксессуар g2u</div><div class="price">22 000 ₽</div></div>
+        <div class="card" onclick="openProduct('FLOWER GUM', '4 000 ₽', 'Розовый кошачий глаз', 'Массивный чокер с мягким свечением камня. Смелое заявление в нежном цвете.', ['https://github.com/xstes/Lantsyuh/blob/main/IMG/FLOWER%20GUM/FLOWER%20GUM.JPG?raw=true', 'https://github.com/xstes/Lantsyuh/blob/main/IMG/FLOWER%20GUM/FLOWER%20GUM%201.JPG?raw=true'], 'доступно')">
+            <div class="status-badge status-available">доступно</div><img src="https://github.com/xstes/Lantsyuh/blob/main/IMG/FLOWER%20GUM/FLOWER%20GUM.JPG?raw=true">
+            <div class="card-content"><div class="title">Чокер FLOWER GUM</div><div class="price">4 000 ₽</div></div>
         </div>
 
-        <div class="card" onclick="openProduct('Аксессуар tei', '19 900 ₽', 'Титан, матовое покрытие', 'Сверхлегкий и прочный титановый сплав.', ['https://github.com/xstes/Lantsyuh/blob/main/Gemini_Generated_Image_teiuu0teiuu0teiu.png?raw=true'], 'под заказ')">
-            <div class="status-badge status-order">под заказ</div><img src="https://github.com/xstes/Lantsyuh/blob/main/Gemini_Generated_Image_teiuu0teiuu0teiu.png?raw=true">
-            <div class="card-content"><div class="title">Аксессуар tei</div><div class="price">19 900 ₽</div></div>
+        <div class="card" onclick="openProduct('TIGA', '3 900 ₽', 'Тигровый глаз', 'Оберег и украшение. Насыщенный золотисто-коричневый перелив камня тигровый глаз.', ['https://github.com/xstes/Lantsyuh/blob/main/IMG/TIGA/TIGA%202.JPG?raw=true', 'https://github.com/xstes/Lantsyuh/blob/main/IMG/TIGA/TIGA%201.JPG?raw=true'], 'доступно')">
+            <div class="status-badge status-available">доступно</div><img src="https://github.com/xstes/Lantsyuh/blob/main/IMG/TIGA/TIGA%202.JPG?raw=true">
+            <div class="card-content"><div class="title">Украшение TIGA</div><div class="price">3 900 ₽</div></div>
+        </div>
+
+        <div class="card" onclick="openProduct('AZUL', '3 800 ₽', 'Лазурит', 'Глубина ночного неба с золотистыми искрами пирита. Благородная классика.', ['https://github.com/xstes/Lantsyuh/blob/main/IMG/AZUL/AZUL.PNG?raw=true'], 'доступно')">
+            <div class="status-badge status-available">доступно</div><img src="https://github.com/xstes/Lantsyuh/blob/main/IMG/AZUL/AZUL.PNG?raw=true">
+            <div class="card-content"><div class="title">Украшение AZUL</div><div class="price">3 800 ₽</div></div>
+        </div>
+
+        <div class="card" onclick="openProduct('BLACKOUT Bracelet', '3 500 ₽', 'Черный оникс', 'Строгий браслет из черного оникса. Ничего лишнего, только стиль.', ['https://github.com/xstes/Lantsyuh/blob/main/IMG/BLACKOUT/BLACKOUT.PNG?raw=true'], 'доступно')">
+            <div class="status-badge status-available">доступно</div><img src="https://github.com/xstes/Lantsyuh/blob/main/IMG/BLACKOUT/BLACKOUT.PNG?raw=true">
+            <div class="card-content"><div class="title">Браслет BLACKOUT</div><div class="price">3 500 ₽</div></div>
+        </div>
+
+        <div class="card" onclick="openProduct('BLACKOUT Neck', '4 200 ₽', 'Черный оникс', 'Текстурный черный оникс в массивном шейном украшении. Твоя броня.', ['https://github.com/xstes/Lantsyuh/blob/main/IMG/BLACKOUT%20NECK/BLACKOUT%20NECK.PNG?raw=true', 'https://github.com/xstes/Lantsyuh/blob/main/IMG/BLACKOUT%20NECK/BLACKOUT%20NECK%201.JPG?raw=true'], 'доступно')">
+            <div class="status-badge status-available">доступно</div><img src="https://github.com/xstes/Lantsyuh/blob/main/IMG/BLACKOUT%20NECK/BLACKOUT%20NECK.PNG?raw=true">
+            <div class="card-content"><div class="title">Украшение BLACKOUT</div><div class="price">4 200 ₽</div></div>
+        </div>
+
+        <div class="card" onclick="openProduct('GRAY', '4 200 ₽', 'Окаменелый коралл', 'Редкий материал с уникальным природным рисунком древности.', ['https://github.com/xstes/Lantsyuh/blob/main/IMG/GRAY/GRAY.PNG?raw=true', 'https://github.com/xstes/Lantsyuh/blob/main/IMG/GRAY/GRAY%201.JPG?raw=true'], 'доступно')">
+            <div class="status-badge status-available">доступно</div><img src="https://github.com/xstes/Lantsyuh/blob/main/IMG/GRAY/GRAY.PNG?raw=true">
+            <div class="card-content"><div class="title">Украшение GRAY</div><div class="price">4 200 ₽</div></div>
         </div>
 
     </div>
@@ -110,7 +131,7 @@
             </div>
             <div id="questionForm">
                 <textarea id="qInput" rows="4" placeholder="Напишите ваш вопрос..."></textarea>
-                <div class="btn-main" onclick="sendQuestion()">Отправить</div>
+                <div class="btn-main" onclick="sendViaMainButton('Вопрос')">Отправить</div>
                 <div class="btn-sec" onclick="hideQuestionForm()" style="padding: 10px; font-size: 12px; border:none;">Отмена</div>
             </div>
         </div>
@@ -122,22 +143,27 @@
         <div id="footerMainBtns"><a href="#" class="contact-btn" onclick="showFooterQuestion()">СВЯЗАТЬСЯ С МЕНЕДЖЕРОМ</a></div>
         <div id="footerQuestionForm">
             <textarea id="fqInput" rows="3" placeholder="Ваше сообщение..."></textarea>
-            <div class="btn-main" onclick="sendFooterQuestion()" style="padding: 12px; font-size: 14px; margin-top: 10px;">Отправить</div>
+            <div class="btn-main" onclick="sendViaMainButton('Общий вопрос')" style="padding: 12px; font-size: 14px; margin-top: 10px;">Отправить</div>
             <div class="btn-sec" onclick="hideFooterQuestion()" style="padding: 5px; font-size: 11px; margin-top: 5px; border:none; opacity: 0.5;">Отмена</div>
         </div>
     </div>
 
-    <div id="toast">Успешно!</div>
+    <div id="toast">Добавлено!</div>
 
     <script>
         let tg = window.Telegram.WebApp;
         let currentProductTitle = "";
         let currentProductPhotos = [];
         let carouselCurrentIdx = 0;
-        tg.expand();
+        let pendingData = "";
 
-        function showToast() {
+        tg.expand();
+        tg.MainButton.textColor = '#000000';
+        tg.MainButton.color = '#FFFFFF';
+
+        function showToast(text = "Добавлено!") {
             const toast = document.getElementById('toast');
+            toast.innerText = text;
             toast.style.display = 'block';
             setTimeout(() => { toast.style.display = 'none'; }, 2000);
         }
@@ -150,6 +176,7 @@
             document.getElementById('m-material').innerText = material;
             document.getElementById('m-desc').innerText = desc;
             hideQuestionForm();
+            
             let statusEl = document.getElementById('m-status');
             statusEl.innerText = status.toUpperCase();
             statusEl.style.color = (status === 'доступно') ? '#4caf50' : '#ff9800';
@@ -170,10 +197,17 @@
                 dots.appendChild(dot);
             });
 
-            document.getElementById('orderBtn').onclick = () => { tg.sendData("Заказ: " + title); closeProduct(); showToast(); };
+            document.getElementById('orderBtn').onclick = () => {
+                pendingData = "Заказ: " + title;
+                tg.MainButton.setText("ПОДТВЕРДИТЬ ЗАКАЗ: " + title);
+                tg.MainButton.show();
+                closeProduct();
+                showToast();
+            };
             document.getElementById('productModal').style.display = 'block';
         }
 
+        // Логика карусели
         document.getElementById('mTrackCont').onclick = () => {
             if (currentProductPhotos.length <= 1) return;
             carouselCurrentIdx = (carouselCurrentIdx + 1) % currentProductPhotos.length;
@@ -181,27 +215,28 @@
             Array.from(document.getElementById('dots').children).forEach((d, i) => d.className = 'dot' + (i === carouselCurrentIdx ? ' active' : ''));
         };
 
+        // Отправка через MainButton (только она закрывает приложение)
+        tg.onEvent('mainButtonClicked', function() {
+            tg.sendData(pendingData);
+        });
+
+        function sendViaMainButton(type) {
+            let val = (type === 'Общий вопрос') ? document.getElementById('fqInput').value : document.getElementById('qInput').value;
+            if (val.trim() === "") return;
+            pendingData = type + ": " + val + (currentProductTitle ? " (Товар: " + currentProductTitle + ")" : "");
+            tg.MainButton.setText("ОТПРАВИТЬ СООБЩЕНИЕ");
+            tg.MainButton.show();
+            hideQuestionForm(); hideFooterQuestion(); closeProduct();
+            showToast("Нажмите кнопку внизу");
+        }
+
         function closeProduct() { document.getElementById('productModal').style.display = 'none'; }
         function openGallery(src) { document.getElementById('galleryImg').src = src; document.getElementById('galleryModal').style.display = 'flex'; }
         function closeGallery() { document.getElementById('galleryModal').style.display = 'none'; }
         function showQuestionForm() { document.getElementById('mainButtons').style.display = 'none'; document.getElementById('questionForm').style.display = 'flex'; }
         function hideQuestionForm() { document.getElementById('mainButtons').style.display = 'flex'; document.getElementById('questionForm').style.display = 'none'; document.getElementById('qInput').value = ''; }
-        
-        function sendQuestion() {
-            const text = document.getElementById('qInput').value;
-            if (text.trim() === "") return;
-            tg.sendData("Вопрос по [" + currentProductTitle + "]: " + text);
-            hideQuestionForm(); closeProduct(); showToast();
-        }
-
         function showFooterQuestion() { document.getElementById('footerMainBtns').style.display = 'none'; document.getElementById('footerQuestionForm').style.display = 'flex'; }
         function hideFooterQuestion() { document.getElementById('footerMainBtns').style.display = 'flex'; document.getElementById('footerQuestionForm').style.display = 'none'; document.getElementById('fqInput').value = ''; }
-        function sendFooterQuestion() {
-            const text = document.getElementById('fqInput').value;
-            if (text.trim() === "") return;
-            tg.sendData("Сообщение менеджеру: " + text);
-            hideFooterQuestion(); showToast();
-        }
     </script>
 </body>
 </html>
