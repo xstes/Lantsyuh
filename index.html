@@ -14,9 +14,9 @@
         .container { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
         .card { background: var(--card-bg); border-radius: 12px; overflow: hidden; border: 1px solid #222; position: relative; }
         
-        /* ИСПРАВЛЕНИЕ: Фото теперь не режется */
-        .card-img-wrapper { width: 100%; aspect-ratio: 1/1; background: #080808; display: flex; align-items: center; justify-content: center; }
-        .card img { max-width: 100%; max-height: 100%; object-fit: contain; display: block; }
+        /* ИСПРАВЛЕНИЕ: Фото теперь совсем не режется */
+        .card-img-wrapper { width: 100%; aspect-ratio: 1/1; background: #000; display: flex; align-items: center; justify-content: center; padding: 5px; box-sizing: border-box; }
+        .card img { max-width: 100%; max-height: 100%; object-fit: contain; display: block; border-radius: 4px; }
         
         .status-badge { position: absolute; top: 8px; left: 8px; font-size: 8px; padding: 3px 6px; border-radius: 4px; text-transform: uppercase; font-weight: bold; background: rgba(0,0,0,0.7); z-index: 5; }
         .status-available { color: #4caf50; }
@@ -26,11 +26,9 @@
         .title { font-size: 12px; color: var(--gray); margin-bottom: 4px; height: 30px; overflow: hidden; line-height: 1.2; }
         .price { font-weight: bold; font-size: 14px; }
 
-        /* Модалка */
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1000; background: #000; overflow-y: auto; }
-        .close-modal { position: fixed; top: 20px; right: 20px; z-index: 1100; background: rgba(0,0,0,0.5); color: #fff; width: 35px; height: 35px; border-radius: 50%; text-align: center; line-height: 33px; font-size: 24px; cursor: pointer; border: 1px solid #555; }
+        .close-modal { position: fixed; top: 20px; right: 20px; z-index: 1100; background: rgba(0,0,0,0.5); color: #fff; width: 35px; height: 35px; border-radius: 50%; text-align: center; line-height: 33px; font-size: 24px; border: 1px solid #555; }
 
-        /* Карусель (внутри карточки) */
         .m-carousel { position: relative; width: 100%; aspect-ratio: 1/1; overflow: hidden; background: #000; display: flex; align-items: center; }
         .m-carousel-track { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: smooth; height: 100%; width: 100%; -webkit-overflow-scrolling: touch; }
         .m-carousel-track::-webkit-scrollbar { display: none; }
@@ -89,7 +87,7 @@
             <div class="info-label">Описание</div><div id="m-desc" class="m-desc"></div>
             
             <div id="prodBtns" class="btn-group">
-                <div class="btn-main" onclick="sendMsg('order')">В корзину</div>
+                <div class="btn-main" onclick="addToCart()">В корзину</div>
                 <div class="btn-sec" onclick="showProdForm()">Задать вопрос</div>
             </div>
 
@@ -106,8 +104,9 @@
     <script>
         let tg = window.Telegram.WebApp;
         let currentP = null;
+        let cart = []; // Список выбранных товаров
         tg.expand();
-        tg.enableClosingConfirmation(); // Предупредит, если случайно захотите закрыть
+        tg.enableClosingConfirmation();
 
         const products = [
             { name: 'GLEAM', price: '3800₽', mat: 'Агат, кварц', desc: 'Игра света в каждой грани натуральных камней.', status: 'доступно', imgs: ['https://github.com/xstes/Lantsyuh/blob/main/IMG/GLEAM/GLEAM%203.PNG?raw=true', 'https://github.com/xstes/Lantsyuh/blob/main/IMG/GLEAM/GLEAM%202.JPG?raw=true', 'https://github.com/xstes/Lantsyuh/blob/main/IMG/GLEAM/GLEAM.JPG?raw=true'] },
@@ -170,31 +169,45 @@
 
         function closeProduct() { document.getElementById('productModal').style.display = 'none'; }
         
-        // ГЛАВНАЯ ФУНКЦИЯ ОТПРАВКИ (БЕЗ ВЫЛЕТА)
+        // НОВАЯ ЛОГИКА КОРЗИНЫ
+        function addToCart() {
+            if (!cart.includes(currentP.name)) {
+                cart.push(currentP.name);
+            }
+            tg.MainButton.setText("ПОДТВЕРДИТЬ ЗАКАЗ");
+            tg.MainButton.show();
+            tg.MainButton.offClick(executeOrder); 
+            tg.MainButton.onClick(executeOrder);
+
+            showToast("Добавлено в заказ!");
+            closeProduct();
+        }
+
+        function executeOrder() {
+            tg.sendData("Заказ: " + cart.join(", "));
+            tg.MainButton.hide();
+        }
+
         function sendMsg(type) {
             let text = "";
-            if (type === 'order') text = "Заказ: " + currentP.name;
             if (type === 'question') text = "Вопрос по [" + currentP.name + "]: " + document.getElementById('prodInput').value;
             if (type === 'manager') text = "Сообщение менеджеру: " + document.getElementById('footerInput').value;
 
-            if ((type === 'question' || type === 'manager') && text.length < 5) return;
+            if (text.length < 5) return;
 
-            // Используем MainButton только как финальный триггер
-            tg.MainButton.setText("ПОДТВЕРДИТЬ И ОТПРАВИТЬ");
+            window.pendingText = text;
+            tg.MainButton.setText("ПОДТВЕРДИТЬ ОТПРАВКУ");
             tg.MainButton.show();
-            
-            // Чтобы не плодить обработчики, сначала очищаем
-            tg.MainButton.offClick(executeSend); 
-            tg.MainButton.onClick(executeSend);
+            tg.MainButton.offClick(executeMsg);
+            tg.MainButton.onClick(executeMsg);
 
-            window.lastText = text; // Сохраняем текст
-            showToast("Нажмите кнопку внизу для подтверждения");
+            showToast("Нажмите кнопку подтверждения внизу");
             closeProduct();
             hideFooterForm();
         }
 
-        function executeSend() {
-            tg.sendData(window.lastText);
+        function executeMsg() {
+            tg.sendData(window.pendingText);
             tg.MainButton.hide();
         }
 
