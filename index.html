@@ -10,9 +10,9 @@
         .header { text-align: center; font-size: 22px; letter-spacing: 5px; margin: 20px 0 10px; font-weight: bold; }
         .main-desc { text-align: center; font-size: 13px; color: var(--gray); margin-bottom: 25px; padding: 0 10px; line-height: 1.4; }
         .container { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .card { background: var(--card-bg); border-radius: 12px; overflow: hidden; border: 1px solid #222; position: relative; cursor: pointer; }
+        .card { background: var(--card-bg); border-radius: 12px; overflow: hidden; border: 1px solid #222; position: relative; }
         .card img { width: 100%; aspect-ratio: 1/1; object-fit: cover; display: block; pointer-events: none; }
-        .status-badge { position: absolute; top: 8px; left: 8px; font-size: 9px; padding: 3px 6px; border-radius: 4px; text-transform: uppercase; font-weight: bold; background: rgba(0,0,0,0.6); z-index: 2; }
+        .status-badge { position: absolute; top: 8px; left: 8px; font-size: 9px; padding: 3px 6px; border-radius: 4px; text-transform: uppercase; font-weight: bold; background: rgba(0,0,0,0.6); z-index: 5; }
         .status-available { color: #4caf50; }
         .status-order { color: #ff9800; }
         .card-content { padding: 10px; }
@@ -22,15 +22,14 @@
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1000; overflow-y: auto; background: #000; }
         .close-modal { position: fixed; top: 20px; right: 20px; z-index: 1100; background: rgba(0,0,0,0.5); color: #fff; width: 35px; height: 35px; border-radius: 50%; text-align: center; line-height: 33px; font-size: 24px; cursor: pointer; border: 1px solid #555; }
 
-        /* Стили карусели со свайпами */
-        .m-carousel { position: relative; width: 100%; aspect-ratio: 1/1; overflow: hidden; background: #fff; touch-action: pan-y; }
-        .m-carousel-track { display: flex; transition: transform 0.3s ease-out; height: 100%; will-change: transform; cursor: grab; }
-        .m-carousel-track.grabbing { cursor: grabbing; }
-        .m-carousel-track img { width: 100%; flex-shrink: 0; aspect-ratio: 1/1; object-fit: cover; user-select: none; -webkit-user-drag: none; }
+        .m-carousel { position: relative; width: 100%; aspect-ratio: 1/1; background: #fff; overflow: hidden; }
+        .m-carousel-track { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: smooth; height: 100%; -webkit-overflow-scrolling: touch; }
+        .m-carousel-track::-webkit-scrollbar { display: none; }
+        .m-carousel-track img { width: 100%; flex-shrink: 0; scroll-snap-align: start; object-fit: cover; aspect-ratio: 1/1; }
         
         .m-carousel-dots { position: absolute; bottom: 15px; width: 100%; display: flex; justify-content: center; gap: 5px; z-index: 10; pointer-events: none; }
-        .dot { width: 6px; height: 6px; background: rgba(0,0,0,0.2); border-radius: 50%; transition: background 0.2s; }
-        .dot.active { background: rgba(0,0,0,0.6); }
+        .dot { width: 6px; height: 6px; background: rgba(0,0,0,0.2); border-radius: 50%; transition: 0.2s; }
+        .dot.active { background: rgba(0,0,0,0.6); transform: scale(1.2); }
 
         .modal-info { padding: 20px; }
         .m-status { font-size: 12px; margin-bottom: 10px; font-weight: bold; }
@@ -42,113 +41,33 @@
         .btn-group { display: flex; flex-direction: column; gap: 10px; margin-top: 30px; }
         .btn-main { background: #fff; color: #000; text-align: center; padding: 15px; border-radius: 10px; font-weight: bold; cursor: pointer; }
         .btn-sec { background: transparent; color: #fff; border: 1px solid #333; text-align: center; padding: 15px; border-radius: 10px; font-weight: bold; cursor: pointer; }
-        #questionForm, #footerQuestionForm { display: none; margin-top: 20px; flex-direction: column; gap: 10px; }
-        textarea { background: #111; border: 1px solid #333; color: #fff; padding: 12px; border-radius: 8px; font-family: inherit; resize: none; width: 100%; box-sizing: border-box; }
-
-        #galleryModal { background: #fff; z-index: 2000; display: none; align-items: center; justify-content: center; }
-        #galleryModal img { max-width: 100%; max-height: 100%; object-fit: contain; }
         
-        .contact-footer { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,0.95); padding: 15px; text-align: center; border-top: 1px solid #222; z-index: 50; }
-        .contact-btn { color: var(--gray); font-size: 12px; text-decoration: none; border-bottom: 1px solid #444; cursor: pointer; }
-        #toast { display: none; position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%); background: var(--toast-bg); color: var(--toast-text); padding: 10px 25px; border-radius: 25px; font-size: 14px; font-weight: bold; z-index: 3000; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
+        #toast { display: none; position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%); background: var(--toast-bg); color: var(--toast-text); padding: 10px 25px; border-radius: 25px; font-size: 14px; font-weight: bold; z-index: 3000; }
     </style>
 </head>
 <body>
 
     <div class="header">LANTSYUH</div>
-    <div class="main-desc">Лимитированные аксессуары ручной работы. <br> Твой стиль — твоя броня.</div>
+    <div class="main-desc">Лимитированные аксессуары ручной работы.</div>
     
-    <div class="container">
-
-        <div class="card" onclick="openProduct('GLEAM', '3 800 ₽', 'Агат, кварц', 'Игра света в каждой грани натуральных камней. Лаконичное и глубокое украшение.', ['https://github.com/xstes/Lantsyuh/blob/main/IMG/GLEAM/GLEAM%203.PNG?raw=true', 'https://github.com/xstes/Lantsyuh/blob/main/IMG/GLEAM/GLEAM%202.JPG?raw=true', 'https://github.com/xstes/Lantsyuh/blob/main/IMG/GLEAM/GLEAM.JPG?raw=true'], 'доступно')">
-            <div class="status-badge status-available">доступно</div><img src="https://github.com/xstes/Lantsyuh/blob/main/IMG/GLEAM/GLEAM%203.PNG?raw=true">
-            <div class="card-content"><div class="title">Украшение GLEAM</div><div class="price">3 800 ₽</div></div>
-        </div>
-
-        <div class="card" onclick="openProduct('RAY', '3 800 ₽', 'Красная яшма', 'Яркая энергия яшмы, притягивающая взгляды. Теплый и сильный акцент.', ['https://github.com/xstes/Lantsyuh/blob/main/IMG/RAY/RAY.PNG?raw=true', 'https://github.com/xstes/Lantsyuh/blob/main/IMG/RAY/RAY%202%20.JPG?raw=true', 'https://github.com/xstes/Lantsyuh/blob/main/IMG/RAY/RAY%203.JPG?raw=true'], 'доступно')">
-            <div class="status-badge status-available">доступно</div><img src="https://github.com/xstes/Lantsyuh/blob/main/IMG/RAY/RAY.PNG?raw=true">
-            <div class="card-content"><div class="title">Украшение RAY</div><div class="price">3 800 ₽</div></div>
-        </div>
-
-        <div class="card" onclick="openProduct('ALBA', '4 200 ₽', 'Разноцветный агат, горный хрусталь', 'Уникальный узор природы. Цвет и порядок камней может отличаться от фото — ваше украшение будет единственным в своем роде.', ['https://github.com/xstes/Lantsyuh/blob/main/IMG/ALBA/ALBA%201.PNG?raw=true', 'https://github.com/xstes/Lantsyuh/blob/main/IMG/ALBA/ALBA.JPG?raw=true'], 'доступно')">
-            <div class="status-badge status-available">доступно</div><img src="https://github.com/xstes/Lantsyuh/blob/main/IMG/ALBA/ALBA%201.PNG?raw=true">
-            <div class="card-content"><div class="title">Украшение ALBA</div><div class="price">4 200 ₽</div></div>
-        </div>
-
-        <div class="card" onclick="openProduct('MOON', '3 800 ₽', 'Молочный кварц', 'Мистическое сияние ночного светила в минималистичном исполнении.', ['https://github.com/xstes/Lantsyuh/blob/main/IMG/MOON/MOON%203.PNG?raw=true', 'https://github.com/xstes/Lantsyuh/blob/main/IMG/MOON/MOON%202.JPG?raw=true', 'https://github.com/xstes/Lantsyuh/blob/main/IMG/MOON/MOON.JPG?raw=true'], 'доступно')">
-            <div class="status-badge status-available">доступно</div><img src="https://github.com/xstes/Lantsyuh/blob/main/IMG/MOON/MOON%203.PNG?raw=true">
-            <div class="card-content"><div class="title">Украшение MOON</div><div class="price">3 800 ₽</div></div>
-        </div>
-
-        <div class="card" onclick="openProduct('LUME', '3 500 ₽', 'Молочный кварц, медицинская сталь', 'Изящные серьги, сочетающие нежность камня и современную надежность стали.', ['https://github.com/xstes/Lantsyuh/blob/main/IMG/LUME/LUME%203.PNG?raw=true', 'https://github.com/xstes/Lantsyuh/blob/main/IMG/LUME/LUME%202.JPG?raw=true', 'https://github.com/xstes/Lantsyuh/blob/main/IMG/LUME/LUME.JPG?raw=true'], 'под заказ')">
-            <div class="status-badge status-order">под заказ</div><img src="https://github.com/xstes/Lantsyuh/blob/main/IMG/LUME/LUME%203.PNG?raw=true">
-            <div class="card-content"><div class="title">Серьги LUME</div><div class="price">3 500 ₽</div></div>
-        </div>
-
-        <div class="card" onclick="openProduct('FLOWER GUM', '4 000 ₽', 'Розовый кошачий глаз', 'Массивный чокер с мягким свечением камня. Смелое заявление в нежном цвете.', ['https://github.com/xstes/Lantsyuh/blob/main/IMG/FLOWER%20GUM/FLOWER%20GUM.JPG?raw=true', 'https://github.com/xstes/Lantsyuh/blob/main/IMG/FLOWER%20GUM/FLOWER%20GUM%201.JPG?raw=true'], 'доступно')">
-            <div class="status-badge status-available">доступно</div><img src="https://github.com/xstes/Lantsyuh/blob/main/IMG/FLOWER%20GUM/FLOWER%20GUM.JPG?raw=true">
-            <div class="card-content"><div class="title">Чокер FLOWER GUM</div><div class="price">4 000 ₽</div></div>
-        </div>
-
-        <div class="card" onclick="openProduct('TIGA', '3 900 ₽', 'Тигровый глаз', 'Оберег и украшение. Насыщенный золотисто-коричневый перелив камня тигровый глаз.', ['https://github.com/xstes/Lantsyuh/blob/main/IMG/TIGA/TIGA.JPG?raw=true', 'https://github.com/xstes/Lantsyuh/blob/main/IMG/TIGA/TIGA%202.JPG?raw=true', 'https://github.com/xstes/Lantsyuh/blob/main/IMG/TIGA/TIGA%201.JPG?raw=true'], 'доступно')">
-            <div class="status-badge status-available">доступно</div><img src="https://github.com/xstes/Lantsyuh/blob/main/IMG/TIGA/TIGA.JPG?raw=true">
-            <div class="card-content"><div class="title">Украшение TIGA</div><div class="price">3 900 ₽</div></div>
-        </div>
-
-        <div class="card" onclick="openProduct('AZUL', '3 800 ₽', 'Лазурит', 'Глубина ночного неба с золотистыми искрами пирита. Благородная классика.', ['https://github.com/xstes/Lantsyuh/blob/main/IMG/AZUL/AZUL.PNG?raw=true'], 'доступно')">
-            <div class="status-badge status-available">доступно</div><img src="https://github.com/xstes/Lantsyuh/blob/main/IMG/AZUL/AZUL.PNG?raw=true">
-            <div class="card-content"><div class="title">Украшение AZUL</div><div class="price">3 800 ₽</div></div>
-        </div>
-
-        <div class="card" onclick="openProduct('BLACKOUT Bracelet', '3 500 ₽', 'Черный оникс', 'Строгий браслет из черного оникса. Ничего лишнего, только стиль.', ['https://github.com/xstes/Lantsyuh/blob/main/IMG/BLACKOUT/BLACKOUT.PNG?raw=true'], 'доступно')">
-            <div class="status-badge status-available">доступно</div><img src="https://github.com/xstes/Lantsyuh/blob/main/IMG/BLACKOUT/BLACKOUT.PNG?raw=true">
-            <div class="card-content"><div class="title">Браслет BLACKOUT</div><div class="price">3 500 ₽</div></div>
-        </div>
-
-        <div class="card" onclick="openProduct('BLACKOUT Neck', '4 200 ₽', 'Черный оникс', 'Текстурный черный оникс в массивном шейном украшении. Твоя броня.', ['https://github.com/xstes/Lantsyuh/blob/main/IMG/BLACKOUT%20NECK/BLACKOUT%20NECK.PNG?raw=true', 'https://github.com/xstes/Lantsyuh/blob/main/IMG/BLACKOUT%20NECK/BLACKOUT%20NECK%201.JPG?raw=true'], 'доступно')">
-            <div class="status-badge status-available">доступно</div><img src="https://github.com/xstes/Lantsyuh/blob/main/IMG/BLACKOUT%20NECK/BLACKOUT%20NECK.PNG?raw=true">
-            <div class="card-content"><div class="title">Украшение BLACKOUT</div><div class="price">4 200 ₽</div></div>
-        </div>
-
-        <div class="card" onclick="openProduct('GRAY', '4 200 ₽', 'Окаменелый коралл', 'Редкий материал с уникальным природным рисунком древности.', ['https://github.com/xstes/Lantsyuh/blob/main/IMG/GRAY/GRAY.PNG?raw=true', 'https://github.com/xstes/Lantsyuh/blob/main/IMG/GRAY/GRAY%201.JPG?raw=true'], 'доступно')">
-            <div class="status-badge status-available">доступно</div><img src="https://github.com/xstes/Lantsyuh/blob/main/IMG/GRAY/GRAY.PNG?raw=true">
-            <div class="card-content"><div class="title">Украшение GRAY</div><div class="price">4 200 ₽</div></div>
-        </div>
-
-    </div>
+    <div class="container" id="catalog"></div>
 
     <div id="productModal" class="modal">
         <div class="close-modal" onclick="closeProduct()">&times;</div>
-        
-        <div class="m-carousel" id="carouselCont">
+        <div class="m-carousel">
             <div class="m-carousel-track" id="track"></div>
             <div class="m-carousel-dots" id="dots"></div>
         </div>
-
         <div class="modal-info">
-            <div id="m-status" class="m-status"></div><div id="m-title" class="m-title"></div><div id="m-price" class="m-price"></div>
+            <div id="m-status" class="m-status"></div>
+            <div id="m-title" class="m-title"></div>
+            <div id="m-price" class="m-price"></div>
             <div class="info-label">Материал</div><div id="m-material" class="m-material"></div>
             <div class="info-label">Описание</div><div id="m-desc" class="m-desc"></div>
-            <div class="btn-group" id="mainButtons">
+            <div class="btn-group">
                 <div class="btn-main" id="orderBtn">В корзину</div>
-                <div class="btn-sec" onclick="showQuestionForm()">Задать вопрос</div>
+                <div class="btn-sec" onclick="tg.sendData('Вопрос по товару: ' + currentProductTitle); showToast('Запрос отправлен');">Задать вопрос</div>
             </div>
-            <div id="questionForm">
-                <textarea id="qInput" rows="4" placeholder="Напишите ваш вопрос..."></textarea>
-                <div class="btn-main" onclick="sendQuestion()">Отправить</div>
-                <div class="btn-sec" onclick="hideQuestionForm()" style="padding: 10px; font-size: 12px; border:none;">Отмена</div>
-            </div>
-        </div>
-    </div>
-
-    <div id="galleryModal" class="modal" onclick="closeGallery()"><div class="close-modal">&times;</div><img id="galleryImg" src=""></div>
-
-    <div class="contact-footer">
-        <div id="footerMainBtns"><a href="#" class="contact-btn" onclick="showFooterQuestion()">СВЯЗАТЬСЯ С МЕНЕДЖЕРОМ</a></div>
-        <div id="footerQuestionForm">
-            <textarea id="fqInput" rows="3" placeholder="Ваше сообщение..."></textarea>
-            <div class="btn-main" onclick="sendFooterQuestion()" style="padding: 12px; font-size: 14px; margin-top: 10px;">Отправить</div>
-            <div class="btn-sec" onclick="hideFooterQuestion()" style="padding: 5px; font-size: 11px; margin-top: 5px; border:none; opacity: 0.5;">Отмена</div>
         </div>
     </div>
 
@@ -157,160 +76,84 @@
     <script>
         let tg = window.Telegram.WebApp;
         let currentProductTitle = "";
-        let currentProductPhotos = [];
         tg.expand();
 
-        function showToast(text = "Добавлено!") {
-            const toast = document.getElementById('toast');
-            toast.innerText = text;
-            toast.style.display = 'block';
-            setTimeout(() => { toast.style.display = 'none'; }, 2000);
-        }
+        // ВЕСЬ ТВОЙ КАТАЛОГ ТУТ:
+        const products = [
+            { name: 'GLEAM', price: '3800₽', mat: 'Агат, кварц', desc: 'Игра света в каждой грани натуральных камней. Лаконичное и глубокое украшение.', status: 'доступно', imgs: ['https://github.com/xstes/Lantsyuh/blob/main/IMG/GLEAM/GLEAM%203.PNG?raw=true', 'https://github.com/xstes/Lantsyuh/blob/main/IMG/GLEAM/GLEAM%202.JPG?raw=true', 'https://github.com/xstes/Lantsyuh/blob/main/IMG/GLEAM/GLEAM.JPG?raw=true'] },
+            { name: 'RAY', price: '3800₽', mat: 'Красная яшма', desc: 'Яркая энергия яшмы, притягивающая взгляды. Теплый и сильный акцент.', status: 'доступно', imgs: ['https://github.com/xstes/Lantsyuh/blob/main/IMG/RAY/RAY.PNG?raw=true', 'https://github.com/xstes/Lantsyuh/blob/main/IMG/RAY/RAY%202%20.JPG?raw=true', 'https://github.com/xstes/Lantsyuh/blob/main/IMG/RAY/RAY%203.JPG?raw=true'] },
+            { name: 'ALBA', price: '4200₽', mat: 'Разноцветный агат, горный хрусталь', desc: 'Уникальный узор природы. Цвет и порядок камней может отличаться от фото.', status: 'доступно', imgs: ['https://github.com/xstes/Lantsyuh/blob/main/IMG/ALBA/ALBA%201.PNG?raw=true', 'https://github.com/xstes/Lantsyuh/blob/main/IMG/ALBA/ALBA.JPG?raw=true'] },
+            { name: 'MOON', price: '3800₽', mat: 'Молочный кварц', desc: 'Мистическое сияние ночного светила в минималистичном исполнении.', status: 'доступно', imgs: ['https://github.com/xstes/Lantsyuh/blob/main/IMG/MOON/MOON%203.PNG?raw=true', 'https://github.com/xstes/Lantsyuh/blob/main/IMG/MOON/MOON%202.JPG?raw=true', 'https://github.com/xstes/Lantsyuh/blob/main/IMG/MOON/MOON.JPG?raw=true'] },
+            { name: 'LUME', price: '3500₽', mat: 'Молочный кварц, мед. сталь', desc: 'Изящные серьги, сочетающие нежность камня и современную надежность.', status: 'под заказ', imgs: ['https://github.com/xstes/Lantsyuh/blob/main/IMG/LUME/LUME%203.PNG?raw=true', 'https://github.com/xstes/Lantsyuh/blob/main/IMG/LUME/LUME%202.JPG?raw=true', 'https://github.com/xstes/Lantsyuh/blob/main/IMG/LUME/LUME.JPG?raw=true'] },
+            { name: 'FLOWER GUM', price: '4000₽', mat: 'Розовый кошачий глаз', desc: 'Массивный чокер с мягким свечением камня. Смелое заявление.', status: 'доступно', imgs: ['https://github.com/xstes/Lantsyuh/blob/main/IMG/FLOWER%20GUM/FLOWER%20GUM.JPG?raw=true', 'https://github.com/xstes/Lantsyuh/blob/main/IMG/FLOWER%20GUM/FLOWER%20GUM%201.JPG?raw=true'] },
+            { name: 'TIGA', price: '3900₽', mat: 'Тигровый глаз', desc: 'Оберег и украшение. Насыщенный золотисто-коричневый перелив камня.', status: 'доступно', imgs: ['https://github.com/xstes/Lantsyuh/blob/main/IMG/TIGA/TIGA.JPG?raw=true', 'https://github.com/xstes/Lantsyuh/blob/main/IMG/TIGA/TIGA%202.JPG?raw=true', 'https://github.com/xstes/Lantsyuh/blob/main/IMG/TIGA/TIGA%201.JPG?raw=true'] },
+            { name: 'AZUL', price: '3800₽', mat: 'Лазурит', desc: 'Глубина ночного неба с золотистыми искрами пирита.', status: 'доступно', imgs: ['https://github.com/xstes/Lantsyuh/blob/main/IMG/AZUL/AZUL.PNG?raw=true'] },
+            { name: 'SOLA', price: '4200₽', mat: 'Гематит, кошачий глаз', desc: 'Элегантный чокер, сочетающий холод гематита и магию кошачьего глаза.', status: 'доступно', imgs: ['https://github.com/xstes/Lantsyuh/blob/main/IMG/SOLA/SOLA.PNG?raw=true', 'https://github.com/xstes/Lantsyuh/blob/main/IMG/SOLA/SOLA%201.JPG?raw=true', 'https://github.com/xstes/Lantsyuh/blob/main/IMG/SOLA/Sola%202.jpeg?raw=true'] },
+            { name: 'BLACKOUT Bracelet', price: '3500₽', mat: 'Черный оникс', desc: 'Строгий браслет из черного оникса. Ничего лишнего.', status: 'доступно', imgs: ['https://github.com/xstes/Lantsyuh/blob/main/IMG/BLACKOUT/BLACKOUT.PNG?raw=true'] },
+            { name: 'BLACKOUT Neck', price: '4200₽', mat: 'Черный оникс', desc: 'Текстурный черный оникс в массивном шейном украшении.', status: 'доступно', imgs: ['https://github.com/xstes/Lantsyuh/blob/main/IMG/BLACKOUT%20NECK/BLACKOUT%20NECK.PNG?raw=true', 'https://github.com/xstes/Lantsyuh/blob/main/IMG/BLACKOUT%20NECK/BLACKOUT%20NECK%201.JPG?raw=true'] },
+            { name: 'GRAY', price: '4200₽', mat: 'Окаменелый коралл', desc: 'Редкий материал с уникальным природным рисунком древности.', status: 'доступно', imgs: ['https://github.com/xstes/Lantsyuh/blob/main/IMG/GRAY/GRAY.PNG?raw=true', 'https://github.com/xstes/Lantsyuh/blob/main/IMG/GRAY/GRAY%201.JPG?raw=true'] }
+        ];
 
-        function openProduct(title, price, material, desc, images, status) {
-            currentProductTitle = title;
-            currentProductPhotos = images;
-            document.getElementById('m-title').innerText = title;
-            document.getElementById('m-price').innerText = price;
-            document.getElementById('m-material').innerText = material;
-            document.getElementById('m-desc').innerText = desc;
-            hideQuestionForm();
+        // Рендеринг карточек
+        const catalog = document.getElementById('catalog');
+        products.forEach(p => {
+            const card = document.createElement('div');
+            card.className = 'card';
+            card.onclick = () => openProduct(p);
+            card.innerHTML = `
+                <div class="status-badge ${p.status === 'доступно' ? 'status-available' : 'status-order'}">${p.status}</div>
+                <img src="${p.imgs[0]}">
+                <div class="card-content">
+                    <div class="title">${p.name}</div>
+                    <div class="price">${p.price}</div>
+                </div>
+            `;
+            catalog.appendChild(card);
+        });
+
+        function openProduct(p) {
+            currentProductTitle = p.name;
+            document.getElementById('m-title').innerText = p.name;
+            document.getElementById('m-price').innerText = p.price;
+            document.getElementById('m-material').innerText = p.mat;
+            document.getElementById('m-desc').innerText = p.desc;
             
-            let statusEl = document.getElementById('m-status');
-            statusEl.innerText = status.toUpperCase();
-            statusEl.style.color = (status === 'доступно') ? '#4caf50' : '#ff9800';
-            
+            const statusEl = document.getElementById('m-status');
+            statusEl.innerText = p.status.toUpperCase();
+            statusEl.className = 'm-status ' + (p.status === 'доступно' ? 'status-available' : 'status-order');
+
             const track = document.getElementById('track');
             const dots = document.getElementById('dots');
             track.innerHTML = ''; dots.innerHTML = '';
-            track.style.transform = 'translateX(0)'; // Сброс позиции
+            track.scrollLeft = 0;
 
-            images.forEach((src, idx) => {
+            p.imgs.forEach((src, idx) => {
                 const img = document.createElement('img');
                 img.src = src;
                 track.appendChild(img);
-                
                 const dot = document.createElement('div');
                 dot.className = 'dot' + (idx === 0 ? ' active' : '');
                 dots.appendChild(dot);
             });
 
-            // Кнопка заказа не закрывает бота
-            document.getElementById('orderBtn').onclick = () => { 
-                tg.sendData("Заказ: " + title); 
-                closeProduct(); 
-                showToast("Добавлено в чат!");
+            track.onscroll = () => {
+                const idx = Math.round(track.scrollLeft / track.offsetWidth);
+                Array.from(dots.children).forEach((d, i) => d.className = 'dot' + (i === idx ? ' active' : ''));
+            };
+
+            document.getElementById('orderBtn').onclick = () => {
+                tg.sendData("Заказ: " + p.name);
+                closeProduct();
+                showToast();
             };
             document.getElementById('productModal').style.display = 'block';
-            
-            // Инициализация свайпов для этого товара
-            initSwipeCarousel();
-        }
-
-        // --- ЛОГИКА СВАЙПОВ ---
-        let currentIdx = 0; // Глобальная переменная для индекса текущего фото
-
-        function initSwipeCarousel() {
-            const container = document.getElementById('carouselCont');
-            const track = document.getElementById('track');
-            const dotsCont = document.getElementById('dots');
-            
-            let startX = 0;
-            currentIdx = 0; // Сброс индекса при открытии нового товара
-            const threshold = 50; // Дистанция для переключения
-
-            // Очистка старых слушателей событий
-            container.replaceWith(container.cloneNode(true));
-            const newContainer = document.getElementById('carouselCont');
-            const newTrack = document.getElementById('track');
-            const newDotsCont = document.getElementById('dots');
-
-            // Восстановление функционала клика по фото для Галереи
-            Array.from(newTrack.getElementsByTagName('img')).forEach((img, idx) => {
-                img.onclick = function() { openGallery(img.src); };
-            });
-
-            function updateTrack(idx) {
-                newTrack.style.transition = 'transform 0.3s ease-out';
-                newTrack.style.transform = `translateX(-${idx * 100}%)`;
-                Array.from(newDotsCont.children).forEach((d, i) => d.className = 'dot' + (i === idx ? ' active' : ''));
-            }
-
-            function handleStart(e) {
-                if (currentProductPhotos.length <= 1) return;
-                startX = (e.type === 'touchstart') ? e.touches[0].clientX : e.clientX;
-                newTrack.style.transition = 'none'; // Убираем плавность при начале жеста
-                if (e.type === 'mousedown') newTrack.classList.add('grabbing');
-            }
-
-            function handleMove(e) {
-                if (startX === 0) return;
-                const moveX = (e.type === 'touchmove') ? e.touches[0].clientX : e.clientX;
-                const diff = moveX - startX;
-                
-                // Если жест горизонтальный, блокируем вертикальный скролл страницы
-                if (Math.abs(diff) > 10) { 
-                    if (e.cancelable) e.preventDefault(); 
-                    const currentOffset = currentIdx * -newContainer.offsetWidth;
-                    newTrack.style.transform = `translateX(${currentOffset + diff}px)`;
-                }
-            }
-
-            function handleEnd(e) {
-                newTrack.classList.remove('grabbing');
-                if (startX === 0) return;
-                const endX = (e.type === 'touchend') ? e.changedTouches[0].clientX : e.clientX;
-                const diff = endX - startX;
-
-                if (diff < -threshold && currentIdx < currentProductPhotos.length - 1) {
-                    currentIdx++; // Свайп влево (следующее фото)
-                } else if (diff > threshold && currentIdx > 0) {
-                    currentIdx--; // Свайп вправо (предыдущее фото)
-                }
-                
-                updateTrack(currentIdx);
-                startX = 0; // Сброс
-            }
-
-            // Тач-события
-            newContainer.addEventListener('touchstart', handleStart, { passive: true });
-            newContainer.addEventListener('touchmove', handleMove, { passive: false });
-            newContainer.addEventListener('touchend', handleEnd);
-
-            // Мышь-события (для ПК)
-            newContainer.addEventListener('mousedown', handleStart);
-            window.addEventListener('mousemove', handleMove);
-            window.addEventListener('mouseup', handleEnd);
         }
 
         function closeProduct() { document.getElementById('productModal').style.display = 'none'; }
-        
-        // Галерея открывается с текущего фото карусели
-        function openGallery(src) { 
-            // Используем src текущего фото из карусели
-            const currentImgSrc = currentProductPhotos[currentIdx];
-            document.getElementById('galleryImg').src = currentImgSrc; 
-            document.getElementById('galleryModal').style.display = 'flex'; 
-        }
-        
-        function closeGallery() { document.getElementById('galleryModal').style.display = 'none'; }
-        function showQuestionForm() { document.getElementById('mainButtons').style.display = 'none'; document.getElementById('questionForm').style.display = 'flex'; }
-        function hideQuestionForm() { document.getElementById('mainButtons').style.display = 'flex'; document.getElementById('questionForm').style.display = 'none'; document.getElementById('qInput').value = ''; }
-        
-        function sendQuestion() {
-            const text = document.getElementById('qInput').value;
-            if (text.trim() === "") return;
-            tg.sendData("Вопрос по [" + currentProductTitle + "]: " + text);
-            hideQuestionForm(); closeProduct(); showToast("Вопрос отправлен!");
-        }
-
-        function showFooterQuestion() { document.getElementById('footerMainBtns').style.display = 'none'; document.getElementById('footerQuestionForm').style.display = 'flex'; }
-        function hideFooterQuestion() { document.getElementById('footerMainBtns').style.display = 'flex'; document.getElementById('footerQuestionForm').style.display = 'none'; document.getElementById('fqInput').value = ''; }
-        function sendFooterQuestion() {
-            const text = document.getElementById('fqInput').value;
-            if (text.trim() === "") return;
-            tg.sendData("Сообщение менеджеру: " + text);
-            hideFooterQuestion(); showToast("Сообщение отправлено!");
+        function showToast(text = "Добавлено!") {
+            const t = document.getElementById('toast');
+            t.innerText = text; t.style.display = 'block';
+            setTimeout(() => t.style.display = 'none', 2000);
         }
     </script>
 </body>
