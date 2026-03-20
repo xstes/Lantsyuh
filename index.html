@@ -14,8 +14,8 @@
         .container { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
         .card { background: var(--card-bg); border-radius: 12px; overflow: hidden; border: 1px solid #222; position: relative; }
         
-        /* ИСПРАВЛЕНИЕ: Фото теперь совсем не режется */
-        .card-img-wrapper { width: 100%; aspect-ratio: 1/1; background: #000; display: flex; align-items: center; justify-content: center; padding: 5px; box-sizing: border-box; }
+        /* Фото без обрезки */
+        .card-img-wrapper { width: 100%; aspect-ratio: 1/1; background: #000; display: flex; align-items: center; justify-content: center; padding: 8px; box-sizing: border-box; }
         .card img { max-width: 100%; max-height: 100%; object-fit: contain; display: block; border-radius: 4px; }
         
         .status-badge { position: absolute; top: 8px; left: 8px; font-size: 8px; padding: 3px 6px; border-radius: 4px; text-transform: uppercase; font-weight: bold; background: rgba(0,0,0,0.7); z-index: 5; }
@@ -26,6 +26,7 @@
         .title { font-size: 12px; color: var(--gray); margin-bottom: 4px; height: 30px; overflow: hidden; line-height: 1.2; }
         .price { font-weight: bold; font-size: 14px; }
 
+        /* Модалка */
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1000; background: #000; overflow-y: auto; }
         .close-modal { position: fixed; top: 20px; right: 20px; z-index: 1100; background: rgba(0,0,0,0.5); color: #fff; width: 35px; height: 35px; border-radius: 50%; text-align: center; line-height: 33px; font-size: 24px; border: 1px solid #555; }
 
@@ -104,7 +105,7 @@
     <script>
         let tg = window.Telegram.WebApp;
         let currentP = null;
-        let cart = []; // Список выбранных товаров
+        let cart = []; 
         tg.expand();
         tg.enableClosingConfirmation();
 
@@ -130,11 +131,7 @@
             card.innerHTML = `
                 <div class="status-badge ${p.status === 'доступно' ? 'status-available' : 'status-order'}">${p.status}</div>
                 <div class="card-img-wrapper"><img src="${p.imgs[0]}"></div>
-                <div class="card-content">
-                    <div class="title">${p.name}</div>
-                    <div class="price">${p.price}</div>
-                </div>
-            `;
+                <div class="card-content"><div class="title">${p.name}</div><div class="price">${p.price}</div></div>`;
             card.onclick = () => openProduct(p);
             catalog.appendChild(card);
         });
@@ -152,33 +149,28 @@
             const track = document.getElementById('track');
             const dots = document.getElementById('dots');
             track.innerHTML = ''; dots.innerHTML = ''; track.scrollLeft = 0;
-
             p.imgs.forEach((src, idx) => {
                 const img = document.createElement('img'); img.src = src; track.appendChild(img);
                 const dot = document.createElement('div'); dot.className = 'dot' + (idx === 0 ? ' active' : ''); dots.appendChild(dot);
             });
-
             track.onscroll = () => {
                 const idx = Math.round(track.scrollLeft / track.offsetWidth);
                 Array.from(dots.children).forEach((d, i) => d.className = 'dot' + (i === idx ? ' active' : ''));
             };
-
             hideProdForm();
             document.getElementById('productModal').style.display = 'block';
         }
 
-        function closeProduct() { document.getElementById('productModal').style.display = 'none'; }
-        
-        // НОВАЯ ЛОГИКА КОРЗИНЫ
         function addToCart() {
-            if (!cart.includes(currentP.name)) {
-                cart.push(currentP.name);
-            }
-            tg.MainButton.setText("ПОДТВЕРДИТЬ ЗАКАЗ");
+            if (!cart.includes(currentP.name)) cart.push(currentP.name);
+            tg.MainButton.setParams({
+                text: "ПОДТВЕРДИТЬ ЗАКАЗ",
+                color: "#ffffff",
+                text_color: "#000000"
+            });
             tg.MainButton.show();
             tg.MainButton.offClick(executeOrder); 
             tg.MainButton.onClick(executeOrder);
-
             showToast("Добавлено в заказ!");
             closeProduct();
         }
@@ -192,18 +184,18 @@
             let text = "";
             if (type === 'question') text = "Вопрос по [" + currentP.name + "]: " + document.getElementById('prodInput').value;
             if (type === 'manager') text = "Сообщение менеджеру: " + document.getElementById('footerInput').value;
-
             if (text.length < 5) return;
-
             window.pendingText = text;
-            tg.MainButton.setText("ПОДТВЕРДИТЬ ОТПРАВКУ");
+            tg.MainButton.setParams({
+                text: "ПОДТВЕРДИТЬ ОТПРАВКУ",
+                color: "#ffffff",
+                text_color: "#000000"
+            });
             tg.MainButton.show();
             tg.MainButton.offClick(executeMsg);
             tg.MainButton.onClick(executeMsg);
-
             showToast("Нажмите кнопку подтверждения внизу");
-            closeProduct();
-            hideFooterForm();
+            closeProduct(); hideFooterForm();
         }
 
         function executeMsg() {
@@ -211,12 +203,8 @@
             tg.MainButton.hide();
         }
 
-        function showToast(txt) {
-            const t = document.getElementById('toast');
-            t.innerText = txt; t.style.display = 'block';
-            setTimeout(() => t.style.display = 'none', 3000);
-        }
-
+        function closeProduct() { document.getElementById('productModal').style.display = 'none'; }
+        function showToast(txt) { const t = document.getElementById('toast'); t.innerText = txt; t.style.display = 'block'; setTimeout(() => t.style.display = 'none', 3000); }
         function showProdForm() { document.getElementById('prodBtns').style.display = 'none'; document.getElementById('prodForm').style.display = 'flex'; }
         function hideProdForm() { document.getElementById('prodBtns').style.display = 'flex'; document.getElementById('prodForm').style.display = 'none'; }
         function showFooterForm() { document.getElementById('footerBtn').style.display = 'none'; document.getElementById('footerForm').style.display = 'flex'; }
