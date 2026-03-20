@@ -5,15 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        :root { --bg: #000; --card-bg: #111; --text: #fff; --gray: #888; --accent: #fff; }
-        body { background: var(--bg); color: var(--text); font-family: -apple-system, sans-serif; margin: 0; padding: 10px; padding-bottom: 100px; -webkit-tap-highlight-color: transparent; }
+        :root { --bg: #000; --card-bg: #111; --text: #fff; --gray: #888; }
+        body { background: var(--bg); color: var(--text); font-family: -apple-system, sans-serif; margin: 0; padding: 10px; padding-bottom: 120px; -webkit-tap-highlight-color: transparent; }
         
         .header { text-align: center; font-size: 22px; letter-spacing: 5px; margin: 20px 0 10px; font-weight: bold; }
         .main-desc { text-align: center; font-size: 13px; color: var(--gray); margin-bottom: 25px; line-height: 1.4; }
         
         .container { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .card { background: var(--card-bg); border-radius: 12px; overflow: hidden; border: 1px solid #222; position: relative; cursor: pointer; }
-        .card img { width: 100%; aspect-ratio: 1/1; object-fit: cover; display: block; pointer-events: none; }
+        .card { background: var(--card-bg); border-radius: 12px; overflow: hidden; border: 1px solid #222; position: relative; }
+        .card img { width: 100%; aspect-ratio: 1/1; object-fit: cover; display: block; }
         
         .status-badge { position: absolute; top: 8px; left: 8px; font-size: 9px; padding: 3px 6px; border-radius: 4px; text-transform: uppercase; font-weight: bold; background: rgba(0,0,0,0.6); z-index: 5; }
         .status-available { color: #4caf50; }
@@ -23,19 +23,19 @@
         .title { font-size: 13px; color: var(--gray); margin-bottom: 4px; height: 32px; overflow: hidden; }
         .price { font-weight: bold; font-size: 15px; }
 
-        /* Модалка */
+        /* Модалка товара */
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1000; background: #000; overflow-y: auto; }
         .close-modal { position: fixed; top: 20px; right: 20px; z-index: 1100; background: rgba(0,0,0,0.5); color: #fff; width: 35px; height: 35px; border-radius: 50%; text-align: center; line-height: 33px; font-size: 24px; cursor: pointer; border: 1px solid #555; }
 
         /* Карусель */
-        .m-carousel { position: relative; width: 100%; aspect-ratio: 1/1; overflow: hidden; }
+        .m-carousel { position: relative; width: 100%; aspect-ratio: 1/1; overflow: hidden; background: #fff; }
         .m-carousel-track { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: smooth; height: 100%; -webkit-overflow-scrolling: touch; }
         .m-carousel-track::-webkit-scrollbar { display: none; }
         .m-carousel-track img { width: 100%; flex-shrink: 0; scroll-snap-align: start; object-fit: cover; }
         
         .m-carousel-dots { position: absolute; bottom: 15px; width: 100%; display: flex; justify-content: center; gap: 5px; pointer-events: none; }
-        .dot { width: 6px; height: 6px; background: rgba(255,255,255,0.3); border-radius: 50%; }
-        .dot.active { background: #fff; transform: scale(1.2); }
+        .dot { width: 6px; height: 6px; background: rgba(0,0,0,0.2); border-radius: 50%; }
+        .dot.active { background: rgba(0,0,0,0.6); transform: scale(1.2); }
 
         .modal-info { padding: 20px; }
         .m-title { font-size: 24px; font-weight: bold; margin-bottom: 10px; }
@@ -47,7 +47,14 @@
         .btn-main { background: #fff; color: #000; text-align: center; padding: 15px; border-radius: 10px; font-weight: bold; cursor: pointer; }
         .btn-sec { background: transparent; color: #fff; border: 1px solid #333; text-align: center; padding: 15px; border-radius: 10px; font-weight: bold; cursor: pointer; }
         
-        #toast { display: none; position: fixed; bottom: 110px; left: 50%; transform: translateX(-50%); background: rgba(255,255,255,0.9); color: #000; padding: 10px 20px; border-radius: 20px; font-size: 14px; font-weight: bold; z-index: 2000; }
+        /* Формы ввода */
+        .form-box { display: none; flex-direction: column; gap: 10px; margin-top: 20px; }
+        textarea { background: #111; border: 1px solid #333; color: #fff; padding: 12px; border-radius: 8px; font-family: inherit; resize: none; width: 100%; box-sizing: border-box; }
+
+        #toast { display: none; position: fixed; bottom: 110px; left: 50%; transform: translateX(-50%); background: rgba(255,255,255,0.95); color: #000; padding: 10px 20px; border-radius: 20px; font-size: 14px; font-weight: bold; z-index: 2000; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
+
+        .footer { padding: 30px 20px 50px; text-align: center; }
+        .contact-btn { color: var(--gray); font-size: 12px; border-bottom: 1px solid #333; cursor: pointer; display: inline-block; }
     </style>
 </head>
 <body>
@@ -56,6 +63,15 @@
     <div class="main-desc">Лимитированные аксессуары ручной работы.</div>
     
     <div class="container" id="catalog"></div>
+
+    <div class="footer">
+        <div id="footerBtn" class="contact-btn" onclick="showFooterForm()">СВЯЗАТЬСЯ С МЕНЕДЖЕРОМ</div>
+        <div id="footerForm" class="form-box">
+            <textarea id="footerInput" rows="3" placeholder="Ваш вопрос менеджеру..."></textarea>
+            <div class="btn-main" onclick="sendFooterMsg()">ОТПРАВИТЬ</div>
+            <div class="btn-sec" onclick="hideFooterForm()" style="border:none; font-size:12px; opacity:0.5;">ОТМЕНА</div>
+        </div>
+    </div>
 
     <div id="productModal" class="modal">
         <div class="close-modal" onclick="closeProduct()">&times;</div>
@@ -69,9 +85,16 @@
             <div id="m-price" class="m-price"></div>
             <div class="info-label">Материал</div><div id="m-material" class="m-material"></div>
             <div class="info-label">Описание</div><div id="m-desc" class="m-desc"></div>
-            <div class="btn-group">
-                <div class="btn-main" id="addToCartBtn">В корзину</div>
-                <div class="btn-sec" id="askBtn">Задать вопрос</div>
+            
+            <div id="prodBtns" class="btn-group">
+                <div class="btn-main" id="cartAction">В корзину</div>
+                <div class="btn-sec" onclick="showProdForm()">Задать вопрос</div>
+            </div>
+
+            <div id="prodForm" class="form-box">
+                <textarea id="prodInput" rows="3" placeholder="Ваш вопрос по этому украшению..."></textarea>
+                <div class="btn-main" onclick="sendProdQuestion()">ОТПРАВИТЬ ВОПРОС</div>
+                <div class="btn-sec" onclick="hideProdForm()" style="border:none; font-size:12px; opacity:0.5;">ОТМЕНА</div>
             </div>
         </div>
     </div>
@@ -80,10 +103,8 @@
 
     <script>
         let tg = window.Telegram.WebApp;
-        let cart = []; 
+        let currentPName = "";
         tg.expand();
-
-        // Скрываем MainButton по умолчанию
         tg.MainButton.hide();
 
         const products = [
@@ -105,40 +126,28 @@
         products.forEach(p => {
             const card = document.createElement('div');
             card.className = 'card';
+            card.innerHTML = `<div class="status-badge ${p.status === 'доступно' ? 'status-available' : 'status-order'}">${p.status}</div><img src="${p.imgs[0]}"><div class="card-content"><div class="title">${p.name}</div><div class="price">${p.price}</div></div>`;
             card.onclick = () => openProduct(p);
-            card.innerHTML = `
-                <div class="status-badge ${p.status === 'доступно' ? 'status-available' : 'status-order'}">${p.status}</div>
-                <img src="${p.imgs[0]}">
-                <div class="card-content">
-                    <div class="title">${p.name}</div>
-                    <div class="price">${p.price}</div>
-                </div>
-            `;
             catalog.appendChild(card);
         });
 
         function openProduct(p) {
+            currentPName = p.name;
             document.getElementById('m-title').innerText = p.name;
             document.getElementById('m-price').innerText = p.price;
             document.getElementById('m-material').innerText = p.mat;
             document.getElementById('m-desc').innerText = p.desc;
-            
             const st = document.getElementById('m-status');
             st.innerText = p.status.toUpperCase();
             st.style.color = p.status === 'доступно' ? '#4caf50' : '#ff9800';
 
             const track = document.getElementById('track');
             const dots = document.getElementById('dots');
-            track.innerHTML = ''; dots.innerHTML = '';
-            track.scrollLeft = 0;
+            track.innerHTML = ''; dots.innerHTML = ''; track.scrollLeft = 0;
 
             p.imgs.forEach((src, idx) => {
-                const img = document.createElement('img');
-                img.src = src;
-                track.appendChild(img);
-                const dot = document.createElement('div');
-                dot.className = 'dot' + (idx === 0 ? ' active' : '');
-                dots.appendChild(dot);
+                const img = document.createElement('img'); img.src = src; track.appendChild(img);
+                const dot = document.createElement('div'); dot.className = 'dot' + (idx === 0 ? ' active' : ''); dots.appendChild(dot);
             });
 
             track.onscroll = () => {
@@ -146,18 +155,12 @@
                 Array.from(dots.children).forEach((d, i) => d.className = 'dot' + (i === idx ? ' active' : ''));
             };
 
-            // КНОПКА «В КОРЗИНУ» — ТЕПЕРЬ НЕ ЗАКРЫВАЕТ
-            document.getElementById('addToCartBtn').onclick = () => {
-                if (!cart.includes(p.name)) cart.push(p.name);
-                updateMainButton();
-                showToast("Добавлено: " + p.name);
-                closeProduct();
-            };
-
-            document.getElementById('askBtn').onclick = () => {
-                tg.MainButton.setParams({ text: "ЗАДАТЬ ВОПРОС ПО " + p.name, color: "#ffffff", text_color: "#000000" });
+            hideProdForm();
+            document.getElementById('cartAction').onclick = () => {
+                tg.MainButton.setParams({ text: "ПОДТВЕРДИТЬ ЗАКАЗ: " + p.name, color: "#ffffff", text_color: "#000000" });
                 tg.MainButton.show();
-                tg.MainButton.onClick(() => { tg.sendData("Вопрос: " + p.name); });
+                tg.MainButton.offClick(finalSend); // Очистка старых событий
+                tg.MainButton.onClick(finalSend);
                 closeProduct();
                 showToast("Нажмите белую кнопку внизу");
             };
@@ -165,26 +168,36 @@
             document.getElementById('productModal').style.display = 'block';
         }
 
-        function updateMainButton() {
-            if (cart.length > 0) {
-                tg.MainButton.setParams({
-                    text: `ОФОРМИТЬ ЗАКАЗ (${cart.length})`,
-                    color: "#ffffff",
-                    text_color: "#000000"
-                });
-                tg.MainButton.show();
-                tg.MainButton.onClick(() => {
-                    tg.sendData("Заказ: " + cart.join(", "));
-                });
-            }
-        }
+        const finalSend = () => { tg.sendData(tg.MainButton.text); };
 
         function closeProduct() { document.getElementById('productModal').style.display = 'none'; }
-        
-        function showToast(text) {
-            const t = document.getElementById('toast');
-            t.innerText = text; t.style.display = 'block';
-            setTimeout(() => t.style.display = 'none', 2500);
+        function showToast(txt) { const t = document.getElementById('toast'); t.innerText = txt; t.style.display = 'block'; setTimeout(() => t.style.display = 'none', 3000); }
+
+        // Функции для форм
+        function showProdForm() { document.getElementById('prodBtns').style.display = 'none'; document.getElementById('prodForm').style.display = 'flex'; }
+        function hideProdForm() { document.getElementById('prodBtns').style.display = 'flex'; document.getElementById('prodForm').style.display = 'none'; document.getElementById('prodInput').value = ''; }
+        function sendProdQuestion() {
+            const val = document.getElementById('prodInput').value;
+            if (!val.trim()) return;
+            tg.MainButton.setParams({ text: "ОТПРАВИТЬ ВОПРОС ПО " + currentPName, color: "#ffffff", text_color: "#000000" });
+            tg.MainButton.show();
+            tg.MainButton.offClick(finalSend);
+            tg.MainButton.onClick(() => { tg.sendData("Вопрос по [" + currentPName + "]: " + val); });
+            closeProduct();
+            showToast("Нажмите белую кнопку внизу");
+        }
+
+        function showFooterForm() { document.getElementById('footerBtn').style.display = 'none'; document.getElementById('footerForm').style.display = 'flex'; }
+        function hideFooterForm() { document.getElementById('footerBtn').style.display = 'inline-block'; document.getElementById('footerForm').style.display = 'none'; document.getElementById('footerInput').value = ''; }
+        function sendFooterMsg() {
+            const val = document.getElementById('footerInput').value;
+            if (!val.trim()) return;
+            tg.MainButton.setParams({ text: "ОТПРАВИТЬ СООБЩЕНИЕ МЕНЕДЖЕРУ", color: "#ffffff", text_color: "#000000" });
+            tg.MainButton.show();
+            tg.MainButton.offClick(finalSend);
+            tg.MainButton.onClick(() => { tg.sendData("Сообщение менеджеру: " + val); });
+            hideFooterForm();
+            showToast("Нажмите белую кнопку внизу");
         }
     </script>
 </body>
