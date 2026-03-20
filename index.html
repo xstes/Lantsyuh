@@ -5,44 +5,49 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        :root { --bg: #000; --card-bg: #111; --text: #fff; --gray: #888; --toast-bg: rgba(255,255,255,0.9); --toast-text: #000; }
-        body { background: var(--bg); color: var(--text); font-family: -apple-system, sans-serif; margin: 0; padding: 10px; padding-bottom: 120px; -webkit-tap-highlight-color: transparent; }
+        :root { --bg: #000; --card-bg: #111; --text: #fff; --gray: #888; --accent: #fff; }
+        body { background: var(--bg); color: var(--text); font-family: -apple-system, sans-serif; margin: 0; padding: 10px; padding-bottom: 100px; -webkit-tap-highlight-color: transparent; }
+        
         .header { text-align: center; font-size: 22px; letter-spacing: 5px; margin: 20px 0 10px; font-weight: bold; }
-        .main-desc { text-align: center; font-size: 13px; color: var(--gray); margin-bottom: 25px; padding: 0 10px; line-height: 1.4; }
+        .main-desc { text-align: center; font-size: 13px; color: var(--gray); margin-bottom: 25px; line-height: 1.4; }
+        
         .container { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .card { background: var(--card-bg); border-radius: 12px; overflow: hidden; border: 1px solid #222; position: relative; }
+        .card { background: var(--card-bg); border-radius: 12px; overflow: hidden; border: 1px solid #222; position: relative; cursor: pointer; }
         .card img { width: 100%; aspect-ratio: 1/1; object-fit: cover; display: block; pointer-events: none; }
+        
         .status-badge { position: absolute; top: 8px; left: 8px; font-size: 9px; padding: 3px 6px; border-radius: 4px; text-transform: uppercase; font-weight: bold; background: rgba(0,0,0,0.6); z-index: 5; }
         .status-available { color: #4caf50; }
         .status-order { color: #ff9800; }
+        
         .card-content { padding: 10px; }
         .title { font-size: 13px; color: var(--gray); margin-bottom: 4px; height: 32px; overflow: hidden; }
         .price { font-weight: bold; font-size: 15px; }
 
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1000; overflow-y: auto; background: #000; }
+        /* Модалка */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1000; background: #000; overflow-y: auto; }
         .close-modal { position: fixed; top: 20px; right: 20px; z-index: 1100; background: rgba(0,0,0,0.5); color: #fff; width: 35px; height: 35px; border-radius: 50%; text-align: center; line-height: 33px; font-size: 24px; cursor: pointer; border: 1px solid #555; }
 
-        .m-carousel { position: relative; width: 100%; aspect-ratio: 1/1; background: #fff; overflow: hidden; }
+        /* Карусель */
+        .m-carousel { position: relative; width: 100%; aspect-ratio: 1/1; overflow: hidden; }
         .m-carousel-track { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: smooth; height: 100%; -webkit-overflow-scrolling: touch; }
         .m-carousel-track::-webkit-scrollbar { display: none; }
-        .m-carousel-track img { width: 100%; flex-shrink: 0; scroll-snap-align: start; object-fit: cover; aspect-ratio: 1/1; }
+        .m-carousel-track img { width: 100%; flex-shrink: 0; scroll-snap-align: start; object-fit: cover; }
         
-        .m-carousel-dots { position: absolute; bottom: 15px; width: 100%; display: flex; justify-content: center; gap: 5px; z-index: 10; pointer-events: none; }
-        .dot { width: 6px; height: 6px; background: rgba(0,0,0,0.2); border-radius: 50%; transition: 0.2s; }
-        .dot.active { background: rgba(0,0,0,0.6); transform: scale(1.2); }
+        .m-carousel-dots { position: absolute; bottom: 15px; width: 100%; display: flex; justify-content: center; gap: 5px; pointer-events: none; }
+        .dot { width: 6px; height: 6px; background: rgba(255,255,255,0.3); border-radius: 50%; }
+        .dot.active { background: #fff; transform: scale(1.2); }
 
         .modal-info { padding: 20px; }
-        .m-status { font-size: 12px; margin-bottom: 10px; font-weight: bold; }
         .m-title { font-size: 24px; font-weight: bold; margin-bottom: 10px; }
         .m-price { font-size: 20px; font-weight: bold; margin-bottom: 15px; }
-        .info-label { color: var(--gray); font-size: 11px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 3px; margin-top: 15px; }
         .m-material, .m-desc { color: #fff; line-height: 1.6; font-size: 14px; margin-bottom: 15px; }
+        .info-label { color: var(--gray); font-size: 11px; text-transform: uppercase; margin-bottom: 3px; margin-top: 15px; }
 
-        .btn-group { display: flex; flex-direction: column; gap: 10px; margin-top: 30px; }
+        .btn-group { display: flex; flex-direction: column; gap: 10px; margin-top: 20px; }
         .btn-main { background: #fff; color: #000; text-align: center; padding: 15px; border-radius: 10px; font-weight: bold; cursor: pointer; }
         .btn-sec { background: transparent; color: #fff; border: 1px solid #333; text-align: center; padding: 15px; border-radius: 10px; font-weight: bold; cursor: pointer; }
         
-        #toast { display: none; position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%); background: var(--toast-bg); color: var(--toast-text); padding: 10px 25px; border-radius: 25px; font-size: 14px; font-weight: bold; z-index: 3000; }
+        #toast { display: none; position: fixed; bottom: 110px; left: 50%; transform: translateX(-50%); background: rgba(255,255,255,0.9); color: #000; padding: 10px 20px; border-radius: 20px; font-size: 14px; font-weight: bold; z-index: 2000; }
     </style>
 </head>
 <body>
@@ -59,13 +64,13 @@
             <div class="m-carousel-dots" id="dots"></div>
         </div>
         <div class="modal-info">
-            <div id="m-status" class="m-status"></div>
+            <div id="m-status" style="font-size: 12px; font-weight: bold; margin-bottom: 5px;"></div>
             <div id="m-title" class="m-title"></div>
             <div id="m-price" class="m-price"></div>
             <div class="info-label">Материал</div><div id="m-material" class="m-material"></div>
             <div class="info-label">Описание</div><div id="m-desc" class="m-desc"></div>
             <div class="btn-group">
-                <div class="btn-main" id="orderBtn">В корзину</div>
+                <div class="btn-main" id="addToCartBtn">В корзину</div>
                 <div class="btn-sec" id="askBtn">Задать вопрос</div>
             </div>
         </div>
@@ -75,20 +80,11 @@
 
     <script>
         let tg = window.Telegram.WebApp;
-        let currentProductTitle = "";
-        let pendingData = ""; // Храним текст для отправки
+        let cart = []; 
         tg.expand();
 
-        // Настройка MainButton (чтобы не вылетало)
-        tg.MainButton.setParams({
-            text: "ПОДТВЕРДИТЬ ЗАКАЗ",
-            color: "#ffffff",
-            text_color: "#000000"
-        });
-
-        tg.MainButton.onClick(function() {
-            tg.sendData(pendingData); // Вот тут бот закроется, но только ПОСЛЕ нажатия этой кнопки
-        });
+        // Скрываем MainButton по умолчанию
+        tg.MainButton.hide();
 
         const products = [
             { name: 'GLEAM', price: '3800₽', mat: 'Агат, кварц', desc: 'Игра света в каждой грани натуральных камней.', status: 'доступно', imgs: ['https://github.com/xstes/Lantsyuh/blob/main/IMG/GLEAM/GLEAM%203.PNG?raw=true', 'https://github.com/xstes/Lantsyuh/blob/main/IMG/GLEAM/GLEAM%202.JPG?raw=true', 'https://github.com/xstes/Lantsyuh/blob/main/IMG/GLEAM/GLEAM.JPG?raw=true'] },
@@ -113,21 +109,23 @@
             card.innerHTML = `
                 <div class="status-badge ${p.status === 'доступно' ? 'status-available' : 'status-order'}">${p.status}</div>
                 <img src="${p.imgs[0]}">
-                <div class="card-content"><div class="title">${p.name}</div><div class="price">${p.price}</div></div>
+                <div class="card-content">
+                    <div class="title">${p.name}</div>
+                    <div class="price">${p.price}</div>
+                </div>
             `;
             catalog.appendChild(card);
         });
 
         function openProduct(p) {
-            currentProductTitle = p.name;
             document.getElementById('m-title').innerText = p.name;
             document.getElementById('m-price').innerText = p.price;
             document.getElementById('m-material').innerText = p.mat;
             document.getElementById('m-desc').innerText = p.desc;
             
-            const statusEl = document.getElementById('m-status');
-            statusEl.innerText = p.status.toUpperCase();
-            statusEl.className = 'm-status ' + (p.status === 'доступно' ? 'status-available' : 'status-order');
+            const st = document.getElementById('m-status');
+            st.innerText = p.status.toUpperCase();
+            st.style.color = p.status === 'доступно' ? '#4caf50' : '#ff9800';
 
             const track = document.getElementById('track');
             const dots = document.getElementById('dots');
@@ -148,31 +146,45 @@
                 Array.from(dots.children).forEach((d, i) => d.className = 'dot' + (i === idx ? ' active' : ''));
             };
 
-            // ЛОГИКА БЕЗ ВЫЛЕТА:
-            document.getElementById('orderBtn').onclick = () => {
-                pendingData = "Заказ: " + p.name;
-                tg.MainButton.setText("ПОДТВЕРДИТЬ ЗАКАЗ: " + p.name);
-                tg.MainButton.show(); // Показываем кнопку подтверждения
+            // КНОПКА «В КОРЗИНУ» — ТЕПЕРЬ НЕ ЗАКРЫВАЕТ
+            document.getElementById('addToCartBtn').onclick = () => {
+                if (!cart.includes(p.name)) cart.push(p.name);
+                updateMainButton();
+                showToast("Добавлено: " + p.name);
                 closeProduct();
-                showToast("Добавлено! Нажми кнопку внизу.");
             };
 
             document.getElementById('askBtn').onclick = () => {
-                pendingData = "Вопрос по товару: " + p.name;
-                tg.MainButton.setText("ОТПРАВИТЬ ВОПРОС ПО " + p.name);
+                tg.MainButton.setParams({ text: "ЗАДАТЬ ВОПРОС ПО " + p.name, color: "#ffffff", text_color: "#000000" });
                 tg.MainButton.show();
+                tg.MainButton.onClick(() => { tg.sendData("Вопрос: " + p.name); });
                 closeProduct();
-                showToast("Напиши вопрос в чате после подтверждения.");
+                showToast("Нажмите белую кнопку внизу");
             };
 
             document.getElementById('productModal').style.display = 'block';
         }
 
+        function updateMainButton() {
+            if (cart.length > 0) {
+                tg.MainButton.setParams({
+                    text: `ОФОРМИТЬ ЗАКАЗ (${cart.length})`,
+                    color: "#ffffff",
+                    text_color: "#000000"
+                });
+                tg.MainButton.show();
+                tg.MainButton.onClick(() => {
+                    tg.sendData("Заказ: " + cart.join(", "));
+                });
+            }
+        }
+
         function closeProduct() { document.getElementById('productModal').style.display = 'none'; }
-        function showToast(text = "Добавлено!") {
+        
+        function showToast(text) {
             const t = document.getElementById('toast');
             t.innerText = text; t.style.display = 'block';
-            setTimeout(() => t.style.display = 'none', 3000);
+            setTimeout(() => t.style.display = 'none', 2500);
         }
     </script>
 </body>
