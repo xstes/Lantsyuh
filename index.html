@@ -6,13 +6,13 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root { --bg: #000; --card-bg: #111; --text: #fff; --gray: #888; --toast-bg: rgba(255,255,255,0.9); --toast-text: #000; }
-        body { background: var(--bg); color: var(--text); font-family: -apple-system, sans-serif; margin: 0; padding: 10px; padding-bottom: 120px; }
+        body { background: var(--bg); color: var(--text); font-family: -apple-system, sans-serif; margin: 0; padding: 10px; padding-bottom: 120px; -webkit-tap-highlight-color: transparent; }
         .header { text-align: center; font-size: 22px; letter-spacing: 5px; margin: 20px 0 10px; font-weight: bold; }
         .main-desc { text-align: center; font-size: 13px; color: var(--gray); margin-bottom: 25px; padding: 0 10px; line-height: 1.4; }
         .container { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .card { background: var(--card-bg); border-radius: 12px; overflow: hidden; border: 1px solid #222; position: relative; }
-        .card img { width: 100%; aspect-ratio: 1/1; object-fit: cover; display: block; }
-        .status-badge { position: absolute; top: 8px; left: 8px; font-size: 9px; padding: 3px 6px; border-radius: 4px; text-transform: uppercase; font-weight: bold; background: rgba(0,0,0,0.6); }
+        .card { background: var(--card-bg); border-radius: 12px; overflow: hidden; border: 1px solid #222; position: relative; cursor: pointer; }
+        .card img { width: 100%; aspect-ratio: 1/1; object-fit: cover; display: block; pointer-events: none; }
+        .status-badge { position: absolute; top: 8px; left: 8px; font-size: 9px; padding: 3px 6px; border-radius: 4px; text-transform: uppercase; font-weight: bold; background: rgba(0,0,0,0.6); z-index: 2; }
         .status-available { color: #4caf50; }
         .status-order { color: #ff9800; }
         .card-content { padding: 10px; }
@@ -22,12 +22,15 @@
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1000; overflow-y: auto; background: #000; }
         .close-modal { position: fixed; top: 20px; right: 20px; z-index: 1100; background: rgba(0,0,0,0.5); color: #fff; width: 35px; height: 35px; border-radius: 50%; text-align: center; line-height: 33px; font-size: 24px; cursor: pointer; border: 1px solid #555; }
 
-        .m-carousel { position: relative; width: 100%; aspect-ratio: 1/1; overflow: hidden; background: #fff; }
-        .m-carousel-track { display: flex; transition: transform 0.3s ease; height: 100%; }
-        .m-carousel-track img { width: 100%; flex-shrink: 0; aspect-ratio: 1/1; object-fit: cover; }
-        .m-carousel-dots { position: absolute; bottom: 15px; width: 100%; display: flex; justify-content: center; gap: 5px; z-index: 10; }
-        .dot { width: 6px; height: 6px; background: rgba(0,0,0,0.3); border-radius: 50%; }
-        .dot.active { background: #000; }
+        /* Стили карусели со свайпами */
+        .m-carousel { position: relative; width: 100%; aspect-ratio: 1/1; overflow: hidden; background: #fff; touch-action: pan-y; }
+        .m-carousel-track { display: flex; transition: transform 0.3s ease-out; height: 100%; will-change: transform; cursor: grab; }
+        .m-carousel-track.grabbing { cursor: grabbing; }
+        .m-carousel-track img { width: 100%; flex-shrink: 0; aspect-ratio: 1/1; object-fit: cover; user-select: none; -webkit-user-drag: none; }
+        
+        .m-carousel-dots { position: absolute; bottom: 15px; width: 100%; display: flex; justify-content: center; gap: 5px; z-index: 10; pointer-events: none; }
+        .dot { width: 6px; height: 6px; background: rgba(0,0,0,0.2); border-radius: 50%; transition: background 0.2s; }
+        .dot.active { background: rgba(0,0,0,0.6); }
 
         .modal-info { padding: 20px; }
         .m-status { font-size: 12px; margin-bottom: 10px; font-weight: bold; }
@@ -39,7 +42,6 @@
         .btn-group { display: flex; flex-direction: column; gap: 10px; margin-top: 30px; }
         .btn-main { background: #fff; color: #000; text-align: center; padding: 15px; border-radius: 10px; font-weight: bold; cursor: pointer; }
         .btn-sec { background: transparent; color: #fff; border: 1px solid #333; text-align: center; padding: 15px; border-radius: 10px; font-weight: bold; cursor: pointer; }
-        
         #questionForm, #footerQuestionForm { display: none; margin-top: 20px; flex-direction: column; gap: 10px; }
         textarea { background: #111; border: 1px solid #333; color: #fff; padding: 12px; border-radius: 8px; font-family: inherit; resize: none; width: 100%; box-sizing: border-box; }
 
@@ -89,7 +91,7 @@
         </div>
 
         <div class="card" onclick="openProduct('TIGA', '3 900 ₽', 'Тигровый глаз', 'Оберег и украшение. Насыщенный золотисто-коричневый перелив камня тигровый глаз.', ['https://github.com/xstes/Lantsyuh/blob/main/IMG/TIGA/TIGA.JPG?raw=true', 'https://github.com/xstes/Lantsyuh/blob/main/IMG/TIGA/TIGA%202.JPG?raw=true', 'https://github.com/xstes/Lantsyuh/blob/main/IMG/TIGA/TIGA%201.JPG?raw=true'], 'доступно')">
-            <div class="status-badge status-available">доступно</div><img src="https://github.com/xstes/Lantsyuh/blob/main/IMG/TIGA/TIGA%202.JPG?raw=true">
+            <div class="status-badge status-available">доступно</div><img src="https://github.com/xstes/Lantsyuh/blob/main/IMG/TIGA/TIGA.JPG?raw=true">
             <div class="card-content"><div class="title">Украшение TIGA</div><div class="price">3 900 ₽</div></div>
         </div>
 
@@ -117,10 +119,12 @@
 
     <div id="productModal" class="modal">
         <div class="close-modal" onclick="closeProduct()">&times;</div>
-        <div class="m-carousel" id="mTrackCont">
+        
+        <div class="m-carousel" id="carouselCont">
             <div class="m-carousel-track" id="track"></div>
             <div class="m-carousel-dots" id="dots"></div>
         </div>
+
         <div class="modal-info">
             <div id="m-status" class="m-status"></div><div id="m-title" class="m-title"></div><div id="m-price" class="m-price"></div>
             <div class="info-label">Материал</div><div id="m-material" class="m-material"></div>
@@ -131,7 +135,7 @@
             </div>
             <div id="questionForm">
                 <textarea id="qInput" rows="4" placeholder="Напишите ваш вопрос..."></textarea>
-                <div class="btn-main" onclick="sendViaMainButton('Вопрос')">Отправить</div>
+                <div class="btn-main" onclick="sendQuestion()">Отправить</div>
                 <div class="btn-sec" onclick="hideQuestionForm()" style="padding: 10px; font-size: 12px; border:none;">Отмена</div>
             </div>
         </div>
@@ -143,7 +147,7 @@
         <div id="footerMainBtns"><a href="#" class="contact-btn" onclick="showFooterQuestion()">СВЯЗАТЬСЯ С МЕНЕДЖЕРОМ</a></div>
         <div id="footerQuestionForm">
             <textarea id="fqInput" rows="3" placeholder="Ваше сообщение..."></textarea>
-            <div class="btn-main" onclick="sendViaMainButton('Общий вопрос')" style="padding: 12px; font-size: 14px; margin-top: 10px;">Отправить</div>
+            <div class="btn-main" onclick="sendFooterQuestion()" style="padding: 12px; font-size: 14px; margin-top: 10px;">Отправить</div>
             <div class="btn-sec" onclick="hideFooterQuestion()" style="padding: 5px; font-size: 11px; margin-top: 5px; border:none; opacity: 0.5;">Отмена</div>
         </div>
     </div>
@@ -154,12 +158,7 @@
         let tg = window.Telegram.WebApp;
         let currentProductTitle = "";
         let currentProductPhotos = [];
-        let carouselCurrentIdx = 0;
-        let pendingData = "";
-
         tg.expand();
-        tg.MainButton.textColor = '#000000';
-        tg.MainButton.color = '#FFFFFF';
 
         function showToast(text = "Добавлено!") {
             const toast = document.getElementById('toast');
@@ -184,59 +183,135 @@
             const track = document.getElementById('track');
             const dots = document.getElementById('dots');
             track.innerHTML = ''; dots.innerHTML = '';
-            track.style.transform = 'translateX(0)';
-            carouselCurrentIdx = 0;
+            track.style.transform = 'translateX(0)'; // Сброс позиции
 
             images.forEach((src, idx) => {
                 const img = document.createElement('img');
                 img.src = src;
-                img.onclick = (e) => { e.stopPropagation(); openGallery(src); };
                 track.appendChild(img);
+                
                 const dot = document.createElement('div');
                 dot.className = 'dot' + (idx === 0 ? ' active' : '');
                 dots.appendChild(dot);
             });
 
-            document.getElementById('orderBtn').onclick = () => {
-                pendingData = "Заказ: " + title;
-                tg.MainButton.setText("ПОДТВЕРДИТЬ ЗАКАЗ: " + title);
-                tg.MainButton.show();
-                closeProduct();
-                showToast();
+            // Кнопка заказа не закрывает бота
+            document.getElementById('orderBtn').onclick = () => { 
+                tg.sendData("Заказ: " + title); 
+                closeProduct(); 
+                showToast("Добавлено в чат!");
             };
             document.getElementById('productModal').style.display = 'block';
+            
+            // Инициализация свайпов для этого товара
+            initSwipeCarousel();
         }
 
-        // Логика карусели
-        document.getElementById('mTrackCont').onclick = () => {
-            if (currentProductPhotos.length <= 1) return;
-            carouselCurrentIdx = (carouselCurrentIdx + 1) % currentProductPhotos.length;
-            document.getElementById('track').style.transform = `translateX(-${carouselCurrentIdx * 100}%)`;
-            Array.from(document.getElementById('dots').children).forEach((d, i) => d.className = 'dot' + (i === carouselCurrentIdx ? ' active' : ''));
-        };
+        // --- ЛОГИКА СВАЙПОВ ---
+        let currentIdx = 0; // Глобальная переменная для индекса текущего фото
 
-        // Отправка через MainButton (только она закрывает приложение)
-        tg.onEvent('mainButtonClicked', function() {
-            tg.sendData(pendingData);
-        });
+        function initSwipeCarousel() {
+            const container = document.getElementById('carouselCont');
+            const track = document.getElementById('track');
+            const dotsCont = document.getElementById('dots');
+            
+            let startX = 0;
+            currentIdx = 0; // Сброс индекса при открытии нового товара
+            const threshold = 50; // Дистанция для переключения
 
-        function sendViaMainButton(type) {
-            let val = (type === 'Общий вопрос') ? document.getElementById('fqInput').value : document.getElementById('qInput').value;
-            if (val.trim() === "") return;
-            pendingData = type + ": " + val + (currentProductTitle ? " (Товар: " + currentProductTitle + ")" : "");
-            tg.MainButton.setText("ОТПРАВИТЬ СООБЩЕНИЕ");
-            tg.MainButton.show();
-            hideQuestionForm(); hideFooterQuestion(); closeProduct();
-            showToast("Нажмите кнопку внизу");
+            // Очистка старых слушателей событий
+            container.replaceWith(container.cloneNode(true));
+            const newContainer = document.getElementById('carouselCont');
+            const newTrack = document.getElementById('track');
+            const newDotsCont = document.getElementById('dots');
+
+            // Восстановление функционала клика по фото для Галереи
+            Array.from(newTrack.getElementsByTagName('img')).forEach((img, idx) => {
+                img.onclick = function() { openGallery(img.src); };
+            });
+
+            function updateTrack(idx) {
+                newTrack.style.transition = 'transform 0.3s ease-out';
+                newTrack.style.transform = `translateX(-${idx * 100}%)`;
+                Array.from(newDotsCont.children).forEach((d, i) => d.className = 'dot' + (i === idx ? ' active' : ''));
+            }
+
+            function handleStart(e) {
+                if (currentProductPhotos.length <= 1) return;
+                startX = (e.type === 'touchstart') ? e.touches[0].clientX : e.clientX;
+                newTrack.style.transition = 'none'; // Убираем плавность при начале жеста
+                if (e.type === 'mousedown') newTrack.classList.add('grabbing');
+            }
+
+            function handleMove(e) {
+                if (startX === 0) return;
+                const moveX = (e.type === 'touchmove') ? e.touches[0].clientX : e.clientX;
+                const diff = moveX - startX;
+                
+                // Если жест горизонтальный, блокируем вертикальный скролл страницы
+                if (Math.abs(diff) > 10) { 
+                    if (e.cancelable) e.preventDefault(); 
+                    const currentOffset = currentIdx * -newContainer.offsetWidth;
+                    newTrack.style.transform = `translateX(${currentOffset + diff}px)`;
+                }
+            }
+
+            function handleEnd(e) {
+                newTrack.classList.remove('grabbing');
+                if (startX === 0) return;
+                const endX = (e.type === 'touchend') ? e.changedTouches[0].clientX : e.clientX;
+                const diff = endX - startX;
+
+                if (diff < -threshold && currentIdx < currentProductPhotos.length - 1) {
+                    currentIdx++; // Свайп влево (следующее фото)
+                } else if (diff > threshold && currentIdx > 0) {
+                    currentIdx--; // Свайп вправо (предыдущее фото)
+                }
+                
+                updateTrack(currentIdx);
+                startX = 0; // Сброс
+            }
+
+            // Тач-события
+            newContainer.addEventListener('touchstart', handleStart, { passive: true });
+            newContainer.addEventListener('touchmove', handleMove, { passive: false });
+            newContainer.addEventListener('touchend', handleEnd);
+
+            // Мышь-события (для ПК)
+            newContainer.addEventListener('mousedown', handleStart);
+            window.addEventListener('mousemove', handleMove);
+            window.addEventListener('mouseup', handleEnd);
         }
 
         function closeProduct() { document.getElementById('productModal').style.display = 'none'; }
-        function openGallery(src) { document.getElementById('galleryImg').src = src; document.getElementById('galleryModal').style.display = 'flex'; }
+        
+        // Галерея открывается с текущего фото карусели
+        function openGallery(src) { 
+            // Используем src текущего фото из карусели
+            const currentImgSrc = currentProductPhotos[currentIdx];
+            document.getElementById('galleryImg').src = currentImgSrc; 
+            document.getElementById('galleryModal').style.display = 'flex'; 
+        }
+        
         function closeGallery() { document.getElementById('galleryModal').style.display = 'none'; }
         function showQuestionForm() { document.getElementById('mainButtons').style.display = 'none'; document.getElementById('questionForm').style.display = 'flex'; }
         function hideQuestionForm() { document.getElementById('mainButtons').style.display = 'flex'; document.getElementById('questionForm').style.display = 'none'; document.getElementById('qInput').value = ''; }
+        
+        function sendQuestion() {
+            const text = document.getElementById('qInput').value;
+            if (text.trim() === "") return;
+            tg.sendData("Вопрос по [" + currentProductTitle + "]: " + text);
+            hideQuestionForm(); closeProduct(); showToast("Вопрос отправлен!");
+        }
+
         function showFooterQuestion() { document.getElementById('footerMainBtns').style.display = 'none'; document.getElementById('footerQuestionForm').style.display = 'flex'; }
         function hideFooterQuestion() { document.getElementById('footerMainBtns').style.display = 'flex'; document.getElementById('footerQuestionForm').style.display = 'none'; document.getElementById('fqInput').value = ''; }
+        function sendFooterQuestion() {
+            const text = document.getElementById('fqInput').value;
+            if (text.trim() === "") return;
+            tg.sendData("Сообщение менеджеру: " + text);
+            hideFooterQuestion(); showToast("Сообщение отправлено!");
+        }
     </script>
 </body>
 </html>
