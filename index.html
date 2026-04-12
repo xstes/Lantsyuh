@@ -25,6 +25,8 @@
         .status-badge { position: absolute; top: 8px; left: 8px; font-size: 8px; padding: 3px 6px; border-radius: 4px; text-transform: uppercase; font-weight: bold; background: rgba(0,0,0,0.7); z-index: 5; }
         .status-available { color: #4caf50; }
         .status-order { color: #ff9800; }
+
+        .badge-new { position: absolute; top: 8px; right: 8px; font-size: 8px; padding: 3px 6px; border-radius: 4px; text-transform: uppercase; font-weight: bold; background: #fff; color: #000; z-index: 5; }
         
         .card-content { padding: 10px; flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between; }
         .title { font-size: 12px; color: var(--gray); margin-bottom: 4px; height: 30px; overflow: hidden; line-height: 1.2; }
@@ -123,7 +125,7 @@
 
         const products = [ 
             // НОВЫЕ ПОСТУПЛЕНИЯ
-{ name: 'PINK FLOWER RING', category: 'кольца', price: '4500₽', mat: 'Японский бисер Miyuki', desc: 'Кольцо ручной работы. Размер: One size.', status: 'доступно', imgs: ['https://github.com/xstes/Lantsyuh/blob/main/IMG/PINK%20FLOWER%20RING/PINK%20FLOWER%20RING.jpeg?raw=true', 'https://github.com/xstes/Lantsyuh/blob/main/IMG/PINK%20FLOWER%20RING/PINK%20FLOWER%20RING%201.jpeg?raw=true'] },
+{ name: 'PINK FLOWER RING', category: 'кольца', isNew: true, price: '4500₽', mat: 'Японский бисер Miyuki', desc: 'Кольцо ручной работы. Размер: One size.', status: 'доступно', imgs: ['https://github.com/xstes/Lantsyuh/blob/main/IMG/PINK%20FLOWER%20RING/PINK%20FLOWER%20RING.jpeg?raw=true', 'https://github.com/xstes/Lantsyuh/blob/main/IMG/PINK%20FLOWER%20RING/PINK%20FLOWER%20RING%201.jpeg?raw=true'] },
 { name: 'BLACK HEART', category: 'брелки', price: '3000₽', mat: 'Керамические бусины, лэмпворк, гематит', desc: 'Массивный и стильный брелок ручной работы.', status: 'доступно', imgs: ['https://github.com/xstes/Lantsyuh/blob/main/IMG/BLACK%20HEART/BLACK%20HEART.jpeg?raw=true'] },
 { name: 'HERMOSO', category: 'ожерелья', price: '3800₽', mat: 'Розовый кварц, барочный жемчуг, серебряные бусины', desc: 'Нежное и благородное украшение.', status: 'доступно', imgs: ['https://github.com/xstes/Lantsyuh/blob/main/IMG/HERMOSO/HERMOSO.jpeg?raw=true'] },
 { name: 'CROSS', category: 'ожерелья', price: '4500₽', mat: 'Камень далматин, барочный жемчуг', desc: 'Контрастное украшение с уникальной текстурой камня.', status: 'доступно', imgs: ['https://github.com/xstes/Lantsyuh/blob/main/IMG/CROSS/CROSS.jpeg?raw=true', 'https://github.com/xstes/Lantsyuh/blob/main/IMG/CROSS/CROSS%201.jpeg?raw=true'] },
@@ -161,8 +163,6 @@
             { name: 'GRAY', category: 'ожерелья', price: '4200₽', mat: 'Окаменелый коралл', desc: 'Редкий материал.', status: 'доступно', imgs: ['https://github.com/xstes/Lantsyuh/blob/main/IMG/GRAY/GRAY.PNG?raw=true', 'https://github.com/xstes/Lantsyuh/blob/main/IMG/GRAY/GRAY%201.JPG?raw=true'] }
         ];
 
-        const catalog = document.getElementById('catalog');
-
         function renderCatalog(filter = 'все') {
             catalog.innerHTML = '';
             const filtered = filter === 'все' ? products : products.filter(p => p.category === filter);
@@ -170,10 +170,19 @@
             filtered.forEach(p => {
                 const card = document.createElement('div');
                 card.className = 'card';
+
+                // Создаем переменную для бейджа "Новинка"
+                // Если у товара в списке прописано isNew: true, добавим блок, иначе — пустоту
+                const newBadge = p.isNew ? `<div class="badge-new">NEW</div>` : '';
+
                 card.innerHTML = `
                     <div class="status-badge ${p.status === 'доступно' ? 'status-available' : 'status-order'}">${p.status}</div>
+                    ${newBadge}
                     <div class="card-img-wrapper"><img src="${p.imgs[0]}"></div>
-                    <div class="card-content"><div class="title">${p.name}</div><div class="price">${p.price}</div></div>`;
+                    <div class="card-content">
+                        <div class="title">${p.name}</div>
+                        <div class="price">${p.price}</div>
+                    </div>`;
                 card.onclick = () => openProduct(p);
                 catalog.appendChild(card);
             });
