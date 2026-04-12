@@ -71,7 +71,8 @@
         <div class="nav-item" onclick="filterCat('ожерелья', this)">Ожерелья</div>
         <div class="nav-item" onclick="filterCat('кольца', this)">Кольца</div>
         <div class="nav-item" onclick="filterCat('серьги', this)">Серьги</div>
-<div class="nav-item" onclick="filterCat('браслеты', this)">Браслеты</div>
+        <div class="nav-item" onclick="filterCat('браслеты', this)">Браслеты</div>
+        <div class="nav-item" onclick="filterCat('брелки', this)">Брелки</div>
     </div>
     
     <div class="container" id="catalog"></div>
@@ -123,15 +124,22 @@
         const products = [ 
             // НОВЫЕ ПОСТУПЛЕНИЯ
 { name: 'PINK FLOWER RING', category: 'кольца', price: '4500₽', mat: 'Японский бисер Miyuki', desc: 'Кольцо ручной работы. Размер: One size.', status: 'доступно', imgs: ['https://github.com/xstes/Lantsyuh/blob/main/IMG/PINK%20FLOWER%20RING/PINK%20FLOWER%20RING.jpeg?raw=true', 'https://github.com/xstes/Lantsyuh/blob/main/IMG/PINK%20FLOWER%20RING/PINK%20FLOWER%20RING%201.jpeg?raw=true'] },
-            { name: 'GLAZ', category: 'ожерелья', price: '3100₽', mat: 'Камень халцедон, длинный кожаный шнурок', desc: 'Стильное украшение на шею.', status: 'доступно', imgs: ['https://github.com/xstes/Lantsyuh/blob/main/IMG/GLAZ/GLAZ.jpeg?raw=true', 'https://github.com/xstes/Lantsyuh/blob/main/IMG/GLAZ/GLAZ%201.jpeg?raw=true', 'https://github.com/xstes/Lantsyuh/blob/main/IMG/GLAZ/GLAZ%202.jpeg?raw=true'] },
+{ name: 'BLACK HEART', category: 'брелки', price: '3000₽', mat: 'Керамические бусины, лэмпворк, гематит', desc: 'Массивный и стильный брелок ручной работы.', status: 'доступно', imgs: ['https://github.com/xstes/Lantsyuh/blob/main/IMG/BLACK%20HEART/BLACK%20HEART.jpeg?raw=true'] },
+{ name: 'HERMOSO', category: 'ожерелья', price: '3800₽', mat: 'Розовый кварц, барочный жемчуг, серебряные бусины', desc: 'Нежное и благородное украшение.', status: 'доступно', imgs: ['https://github.com/xstes/Lantsyuh/blob/main/IMG/HERMOSO/HERMOSO.jpeg?raw=true'] },
+{ name: 'CROSS', category: 'ожерелья', price: '4500₽', mat: 'Камень далматин, барочный жемчуг', desc: 'Контрастное украшение с уникальной текстурой камня.', status: 'доступно', imgs: ['https://github.com/xstes/Lantsyuh/blob/main/IMG/CROSS/CROSS.jpeg?raw=true', 'https://github.com/xstes/Lantsyuh/blob/main/IMG/CROSS/CROSS%201.jpeg?raw=true'] },
+{ name: 'JADE', category: 'ожерелья', price: '4000₽', mat: 'Камень жадеит', desc: 'Массивное колье из натурального жадеита.', status: 'доступно', imgs: ['https://github.com/xstes/Lantsyuh/blob/main/IMG/JADE/JADE.jpeg?raw=true', 'https://github.com/xstes/Lantsyuh/blob/main/IMG/JADE/JADE%201.jpeg?raw=true', 'https://github.com/xstes/Lantsyuh/blob/main/IMG/JADE/JADE%202.jpeg?raw=true'] },
+{ name: 'RASA', category: 'ожерелья', price: '3900₽', mat: 'Розовый и темно-синий кварц, стеклярус', desc: 'Игра цвета и прозрачности в одном украшении.', status: 'доступно', imgs: ['https://github.com/xstes/Lantsyuh/blob/main/IMG/RASA/RASA.jpeg?raw=true', 'https://github.com/xstes/Lantsyuh/blob/main/IMG/RASA/RASA%202.jpeg?raw=true', 'https://github.com/xstes/Lantsyuh/blob/main/IMG/RASA/RASA%201.jpeg?raw=true'] }
+            
+           
+            
+            // ОСНОВНОЙ КАТАЛОГ
+
+             { name: 'GLAZ', category: 'ожерелья', price: '3100₽', mat: 'Камень халцедон, длинный кожаный шнурок', desc: 'Стильное украшение на шею.', status: 'доступно', imgs: ['https://github.com/xstes/Lantsyuh/blob/main/IMG/GLAZ/GLAZ.jpeg?raw=true', 'https://github.com/xstes/Lantsyuh/blob/main/IMG/GLAZ/GLAZ%201.jpeg?raw=true', 'https://github.com/xstes/Lantsyuh/blob/main/IMG/GLAZ/GLAZ%202.jpeg?raw=true'] },
             { name: 'OTTO', category: 'ожерелья', price: '3600₽', mat: 'Гематит, зеленая яшма', desc: 'Украшение с характером.', status: 'доступно', imgs: ['https://github.com/xstes/Lantsyuh/blob/main/IMG/OTTO/OTTO.jpeg?raw=true', 'https://github.com/xstes/Lantsyuh/blob/main/IMG/OTTO/OTTO%201.jpeg?raw=true', 'https://github.com/xstes/Lantsyuh/blob/main/IMG/OTTO/OTTO%202.jpeg?raw=true'] },
             { name: 'STILL BLUE', category: 'ожерелья', price: '3200₽', mat: 'Гематит, стекло', desc: 'Глубокий синий в сочетании с металлическим блеском.', status: 'доступно', imgs: ['https://github.com/xstes/Lantsyuh/blob/main/IMG/STILL%20BLUE/STILL%20BLUE.jpeg?raw=true'] },
             { name: 'Trío', category: 'ожерелья', price: '3100₽', mat: 'Горный хрусталь, оникс, песочная яшма', desc: 'Тройная энергия камней.', status: 'доступно', imgs: ['https://github.com/xstes/Lantsyuh/blob/main/IMG/Trío/Trío.jpeg?raw=true', 'https://github.com/xstes/Lantsyuh/blob/main/IMG/Trío/Trío%201.jpeg?raw=true'] },
             { name: 'Зеленые серьги FLOREAL', category: 'серьги', price: '3500₽', mat: 'Стеклярус', desc: 'Флориальные мотивы в сочном зеленом цвете.', status: 'доступно', imgs: ['https://github.com/xstes/Lantsyuh/blob/main/IMG/Зеленые%20серьги%20FLOREAL/Зеленые%20серьги%20FLOREAL.jpeg?raw=true', 'https://github.com/xstes/Lantsyuh/blob/main/IMG/Зеленые%20серьги%20FLOREAL/Зеленые%20серьги%20FLOREAL%201.jpeg?raw=true', 'https://github.com/xstes/Lantsyuh/blob/main/IMG/Зеленые%20серьги%20FLOREAL/Зеленые%20серьги%20FLOREAL%202.jpeg?raw=true'] },
             { name: 'Розовые серьги FLOREAL', category: 'серьги', price: '3500₽', mat: 'Стеклярус', desc: 'Нежность и стиль в розовом цвете.', status: 'доступно', imgs: ['https://github.com/xstes/Lantsyuh/blob/main/IMG/Розовые%20серьги%20FLOREAL/Розовые%20серьги%20FLOREAL.jpeg?raw=true', 'https://github.com/xstes/Lantsyuh/blob/main/IMG/Розовые%20серьги%20FLOREAL/Розовые%20серьги%20FLOREAL%201.jpeg?raw=true', 'https://github.com/xstes/Lantsyuh/blob/main/IMG/Розовые%20серьги%20FLOREAL/Розовые%20серьги%20FLOREAL%202.jpeg?raw=true'] },
-            
-            // ОСНОВНОЙ КАТАЛОГ
-            
             { name: 'Candy boom', category: 'браслеты', price: '4500₽', mat: 'Барочный жемчуг, лэмпворк', desc: 'Браслет на магнитном замочке.', status: 'доступно', imgs: ['https://github.com/xstes/Lantsyuh/blob/main/IMG/Candy%20boom%20%20/Candy%20boom%20%20.jpeg?raw=true'] },
             { name: 'Dot', category: 'ожерелья', price: '3100₽', mat: 'Стеклярус, белый кошачий глаз', desc: 'Минималистичное украшение.', status: 'доступно', imgs: ['https://github.com/xstes/Lantsyuh/blob/main/IMG/Dot/Dot.jpeg?raw=true', 'https://github.com/xstes/Lantsyuh/blob/main/IMG/Dot/Dot%201.jpeg?raw=true'] },
             { name: 'Longy', category: 'ожерелья', price: '3500₽', mat: 'Барочный жемчуг, стекло', desc: 'Универсальное: пояс или шея.', status: 'доступно', imgs: ['https://github.com/xstes/Lantsyuh/blob/main/IMG/Longy/Longy.jpeg?raw=true', 'https://github.com/xstes/Lantsyuh/blob/main/IMG/Longy/Longy%201.jpeg?raw=true', 'https://github.com/xstes/Lantsyuh/blob/main/IMG/Longy/Longy%202.jpeg?raw=true'] },
