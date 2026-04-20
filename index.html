@@ -200,7 +200,7 @@
             document.getElementById('m-title').innerText = p.name;
             document.getElementById('m-price').innerText = p.price;
             document.getElementById('m-material').innerText = p.mat;
-            document.getElementById('m-desc').innerText = p.desc;
+            document.getElementById('m-desc').innerHTML = p.desc;
             const st = document.getElementById('m-status');
             st.innerText = p.status.toUpperCase();
             st.style.color = p.status === 'доступно' ? '#4caf50' : '#ff9800';
